@@ -1,13 +1,11 @@
 #ifndef OB_HPP
 #define OB_HPP
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 
 class Obstacle{//A class to track Obstacles
 public:
-	static double bound;//World Bounds
 	
 	glm::vec3 pos;//position
 	double speed;//speed
@@ -19,7 +17,7 @@ public:
 	glm::vec3 color;
 private:
 	bool offScreen();//check if the position is off screen and delete
+	double bound = 20;//World Bounds
 };
 
-double Obstacle::bound = 20;
 #endif

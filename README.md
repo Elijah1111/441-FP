@@ -6,6 +6,7 @@ Final Project for CSCI 441
 
 
 # Controls
+9 - Spawn Obstacle
 0 - Toggle Free Cam
 A - Move Left
 D - Move Right

@@ -10,6 +10,9 @@
 #define M_PI 3.14159265
 #endif
 
+void print(glm::vec3 p){//prints a vector
+	std::cout<<p[0]<<' '<<p[1]<<' '<<p[2]<<'\n';
+}
 /// \desc Simple helper function to return a random number between 0.0f and 1.0f.
 GLfloat getRand() {
     return (GLfloat)rand() / (GLfloat)RAND_MAX;
@@ -36,6 +39,9 @@ Engine::~Engine() {
 void Engine::handleKeyEvent(GLint key, GLint action) {
     if(key != GLFW_KEY_UNKNOWN){
 	if (key == GLFW_KEY_0){
+        	_keys[key] = ((action == GLFW_RELEASE));
+	}
+	if (key == GLFW_KEY_9){
         	_keys[key] = ((action == GLFW_RELEASE));
 	}
     	else 
@@ -160,6 +166,30 @@ void Engine::_setupBuffers() {
     
 	_createGroundBuffers();
     _generateEnvironment();
+}
+
+void Engine::_createObstacle(){
+  		double p = 25;
+		// translate to spot
+		glm::mat4 transToSpotMtx = glm::translate( glm::mat4(1.0), glm::vec3(5.0f, 0.0f, -p) );
+
+		// compute random height
+		GLdouble height = powf(getRand(), 2.5)*5 + 1;
+		// scale to size
+		glm::mat4 scaleToHeightMtx = glm::scale( glm::mat4(1.0), glm::vec3(1, height, 1) );
+
+		// translate up to grid
+		glm::mat4 transToHeight = glm::translate( glm::mat4(1.0), glm::vec3(0, height/2.0f, 0) );
+
+		// compute full model matrix
+		glm::mat4 modelMatrix = transToHeight * scaleToHeightMtx * transToSpotMtx;
+
+		// compute random color
+		glm::vec3 color( getRand(), getRand(), getRand() );
+		// store building properties
+		Obstacle ob(glm::vec3(0,0,p), modelMatrix, color, getRand()*0.20f + 0.05);
+		_obs.emplace_back( ob );
+		std::cout<<"MADE OBS!!!\n";
 }
 
 void Engine::_createGroundBuffers() {
@@ -426,6 +456,29 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
         CSCI441::drawSolidCone(1.0,1.0,10,10);
     }
     //// END DRAWING THE TREES ////
+	//// BEGIN DRAWING OBSTACLES ////
+	std::vector<int> remove;
+	for(int i=0; i<_obs.size(); i++) {
+        Obstacle currentObs = _obs[i];
+		//print(currentObs.pos);//very spammy
+		_computeAndSendMatrixUniforms(currentObs.modelMatrix, viewMtx, projMtx);
+
+        glUniform3fv(_lightingShaderUniformLocations.materialColor, 1, &currentObs.color[0]);
+
+        CSCI441::drawSolidCube(1.0);
+		if(currentObs.step())
+				remove.emplace_back(i);
+    	_obs[i] = currentObs;
+	}
+	for(int i : remove){//remove obstacls that have gone out of bounds
+			
+			_obs.erase(_obs.begin() + i);
+			std::cout<<"Remove Obstacle\n";
+	}
+	//// END DRAWING OBSTACLES ////
+	
+
+
     //// BEGIN SETING LOOK AT LOCAL///
     glm::vec3 viewPos;
 	viewPos = _freeCam->getPosition();
@@ -503,7 +556,11 @@ void Engine::_updateScene() {
 				}
 		}
 		
-    
+		
+		if(_keys[GLFW_KEY_9]){//spawn a obstale
+			_keys[GLFW_KEY_9] = false;//consume that input
+    		_createObstacle();	
+		}
 }
 
 void Engine::run() {
@@ -561,9 +618,6 @@ void Engine::_computeAndSendMatrixUniforms(glm::mat4 modelMtx, glm::mat4 viewMtx
 
 }
 
-void print(glm::vec3 p){//prints a vector
-	std::cout<<p[0]<<' '<<p[1]<<' '<<p[2]<<'\n';
-}
 
 double findDist(glm::vec3 P0, glm::vec3 P1){
 	//a helper function to find distance between two points

@@ -1,7 +1,6 @@
 #ifndef LAB05_LAB05_ENGINE_HPP
 #define LAB05_LAB05_ENGINE_HPP
 
-#include <CSCI441/FreeCam.hpp>
 #include <CSCI441/OpenGLEngine.hpp>
 #include <CSCI441/ShaderProgram.hpp>
 #include <CSCI441/FreeCam.hpp>
@@ -132,6 +131,10 @@ private:
 
     /// \desc generates building information to make up our scene
     void _generateEnvironment();
+	
+	
+	void _createObstacle();//creates an obstacle
+
 
     /// \desc shader program that performs lighting
     CSCI441::ShaderProgram* _lightingShaderProgram = nullptr;   // the wrapper for our shader program
