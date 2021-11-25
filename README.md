@@ -6,7 +6,12 @@ Final Project for CSCI 441
 
 
 # Controls
+0 - Toggle Free Cam
+A - Move Left
+D - Move Right
 
+In Free Cam Mode
+WASD - To Move Camera
 
 # Credit
 
