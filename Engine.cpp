@@ -334,7 +334,7 @@ void Engine::_setupScene() {
 	//SETUP SPOTLIGHT
     glm::vec3 pcol = glm::vec3(1, 0, 0);
     glm::vec3 pdir = glm::vec3(0,-1.0f,0);
-    glm::vec3 ppos = glm::vec3(WORLD_SIZE/2,10, WORLD_SIZE/2);
+    glm::vec3 ppos = glm::vec3(5,10, 0);
     glProgramUniform3fv(_lightingShaderProgram->getShaderProgramHandle(),
                         _spotlight.pos,
                         1,&ppos[0]);
@@ -428,8 +428,8 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
     //// END DRAWING THE GREEN SUN////
     
     //// BEGIN DRAWING THE RED CONE////
-    tmp = glm::translate( glm::mat4(1.0), glm::vec3(WORLD_SIZE/2, 
-			    7.80f, WORLD_SIZE/2));
+    tmp = glm::translate( glm::mat4(1.0), glm::vec3(0, 
+			    7.80f, 0));
     _computeAndSendMatrixUniforms(tmp, viewMtx, projMtx);
     glm::vec3 red = glm::vec3(1,0,0);
     glUniform3fv(_lightingShaderUniformLocations.materialColor, 1, &red[0]);
@@ -471,7 +471,6 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
     	_obs[i] = currentObs;
 	}
 	for(int i : remove){//remove obstacls that have gone out of bounds
-			
 			_obs.erase(_obs.begin() + i);
 			std::cout<<"Remove Obstacle\n";
 	}
