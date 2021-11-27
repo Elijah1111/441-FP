@@ -1,4 +1,4 @@
-#include "Craft.hpp"
+#include "Player.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -9,7 +9,7 @@
 #define M_PI 3.14159265
 #endif
 
-Craft::Craft( GLuint shaderProgramHandle, GLint mvpMtxUniformLocation, GLint normalMtxUniformLocation, GLint materialColorUniformLocation, GLint mMtxUniformLocation ) {
+Player::Player( GLuint shaderProgramHandle, GLint mvpMtxUniformLocation, GLint normalMtxUniformLocation, GLint materialColorUniformLocation, GLint mMtxUniformLocation ) {
 
     _shaderProgramHandle                            = shaderProgramHandle;
     _shaderProgramUniformLocations.mvpMtx           = mvpMtxUniformLocation;
@@ -17,15 +17,13 @@ Craft::Craft( GLuint shaderProgramHandle, GLint mvpMtxUniformLocation, GLint nor
     _shaderProgramUniformLocations.materialColor    = materialColorUniformLocation;
     _shaderProgramUniformLocations.model            = mMtxUniformLocation;
 
-    _rotateCraftAngle = M_PI / 2.0f;
-
     _breadColor = glm::vec3( 0.776f,0.537f,0.345f);
     _accentColor = glm::vec3( 0.952f,0.835f,0.647f);
     _butterColor = glm::vec3( 0.9f,0.9f,0.0f);
     _scaleBody = glm::vec3( 2.0f, 0.5f, 1.0f );
 }
 
-void Craft::drawMe( glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) {
+void Player::drawMe( glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) {
     glUseProgram( _shaderProgramHandle );
 	
     modelMtx = glm::rotate( modelMtx, heading, CSCI441::Y_AXIS );
@@ -37,17 +35,17 @@ void Craft::drawMe( glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) {
     _drawFront(modelMtx, viewMtx, projMtx);        // the tail
 }
 
-void Craft::turnLeft() {
+void Player::turnLeft() {
     heading += _headRot;
     if( heading > 2.0f * M_PI ) heading -= 2.0f * M_PI;//clamp heading
 }
 
-void Craft::turnRight() {
+void Player::turnRight() {
     heading -= _headRot;
     if( heading < 0.0f ) heading += 2.0f * M_PI;
 }
 
-void Craft::_drawBody(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) const {
+void Player::_drawBody(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) const {
     GLfloat  h = 0.05;
     _computeAndSendMatrixUniforms(modelMtx, viewMtx, projMtx);
 
@@ -68,7 +66,7 @@ void Craft::_drawBody(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx )
 }
 
 
-void Craft::_drawBack(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) const {
+void Player::_drawBack(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) const {
     
 	modelMtx = glm::translate( modelMtx, glm::vec3 (0,0,-0.2) );
     
@@ -92,7 +90,7 @@ void Craft::_drawBack(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx )
     CSCI441::drawSolidCylinder(0.02,0.02,0.1,100,100);//add exaughst pipe
 }
 
-void Craft::_drawFront(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) const {
+void Player::_drawFront(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) const {
 	
     modelMtx = glm::translate( modelMtx, glm::vec3 (0,0,0.2) );
     _computeAndSendMatrixUniforms(modelMtx, viewMtx, projMtx);
@@ -102,12 +100,12 @@ void Craft::_drawFront(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx 
     CSCI441::drawSolidCone( 0.02, 0.125, 16, 16 );
 }
 
-void Craft::frame(){//increment frame
+void Player::frame(){//increment frame
 	_frameI++;
 	_frameI %= 256;
 }
 
-void Craft::_computeAndSendMatrixUniforms(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx) const {
+void Player::_computeAndSendMatrixUniforms(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx) const {
     // precompute the Model-View-Projection matrix on the CPU
     glm::mat4 mvpMtx = projMtx * viewMtx * modelMtx;
     // then send it to the shader on the GPU to apply to every vertex

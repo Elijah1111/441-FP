@@ -157,7 +157,7 @@ void Engine::_setupBuffers() {
     CSCI441::setVertexAttributeLocations( _lightingShaderAttributeLocations.vPos,
 				   	_lightingShaderAttributeLocations.vNorm );
 
-    _craft = new Craft(_lightingShaderProgram->getShaderProgramHandle(),
+    _player = new Player(_lightingShaderProgram->getShaderProgramHandle(),
                        _lightingShaderUniformLocations.mvpMatrix,
                        _lightingShaderUniformLocations.normMat,
                        _lightingShaderUniformLocations.materialColor,
@@ -375,7 +375,7 @@ void Engine::_cleanupBuffers() {
 	glDeleteBuffers(1, &_skybox.VBO);
 
     fprintf( stdout, "[INFO]: ...deleting models..\n" );
-    delete _craft;
+    delete _player;
 }
 
 //*************************************************************************************
@@ -485,11 +485,11 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
     //// BEGIN DRAWING THE MODELS ////
     glm::mat4 modelMtx(1.0f);
     
-    glm::mat4 modelMtx0 = glm::translate( modelMtx, _craft->pos );
+    glm::mat4 modelMtx0 = glm::translate( modelMtx, _player->pos );
     
     // draw our craft now
-    _craft->frame();
-    _craft->drawMe( modelMtx0, viewMtx, projMtx );
+    _player->frame();
+    _player->drawMe( modelMtx0, viewMtx, projMtx );
     
     //// END DRAWING MODELS ////
    	
@@ -498,18 +498,18 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
 void Engine::_updateScene() {
 	// player Move 
 	if (_keys[GLFW_KEY_A]) {//move left
-		glm::vec3 pos = _craft->pos;
+		glm::vec3 pos = _player->pos;
 		pos[2] += _camStat.speed.x * 5;
 		if (fabs(pos[2]) >= 10)//Bounds Check
 			return;
-		_craft->pos = pos;
+		_player->pos = pos;
 	}
 	if (_keys[GLFW_KEY_D]) {//Move Right
-		glm::vec3 pos = _craft->pos;
+		glm::vec3 pos = _player->pos;
 		pos[2] -= _camStat.speed.x * 5;
 		if (fabs(pos[2]) >= 10)//BoundsCheck
 			return;
-		_craft->pos = pos;
+		_player->pos = pos;
 	}
         // free cam
 		if(_keys[GLFW_KEY_0]){

@@ -9,7 +9,7 @@
 #include <vector>
 #include <ctime>
 
-#include "Craft.hpp"
+#include "Player.hpp"
 #include "Obstacle.hpp"
 
 class Engine : public CSCI441::OpenGLEngine {
@@ -90,8 +90,8 @@ private:
 		bool free = false;//is the camera in free roam
 	}_camStat;//start locations etc
 
-    /// \desc HoverCraft model
-    Craft* _craft;
+    /// \desc HoverPlayer model
+    Player* _player;
 
     /// \desc the size of the world (controls the ground size and locations of buildings)
     static constexpr GLfloat WORLD_SIZE = 55.0f;

@@ -5,19 +5,19 @@
 
 #include <glm/glm.hpp>
 
-class Craft {
+class Player {
 public:
-    /// \desc creates a simple craft that gives the appearance of flight
-    /// \param shaderProgramHandle shader program handle that the craft should be drawn using
+    /// \desc creates a simple player that gives the appearance of flight
+    /// \param shaderProgramHandle shader program handle that the player should be drawn using
     /// \param mvpMtxUniformLocation uniform location for the full precomputed MVP matrix
     /// \param normalMtxUniformLocation uniform location for the precomputed Normal matrix
     /// \param materialColorUniformLocation uniform location for the material diffuse color
-    Craft( GLuint shaderProgramHandle, GLint mvpMtxUniformLocation, GLint normalMtxUniformLocation, GLint materialColorUniformLocation, GLint mMtxUniformLocation );
+    Player( GLuint shaderProgramHandle, GLint mvpMtxUniformLocation, GLint normalMtxUniformLocation, GLint materialColorUniformLocation, GLint mMtxUniformLocation );
 
-    /// \desc draws the model craft for a given MVP matrix
-    /// \param modelMtx existing model matrix to apply to craft
-    /// \param viewMtx camera view matrix to apply to craft
-    /// \param projMtx camera projection matrix to apply to craft
+    /// \desc draws the model player for a given MVP matrix
+    /// \param modelMtx existing model matrix to apply to player
+    /// \param viewMtx camera view matrix to apply to player
+    /// \param projMtx camera projection matrix to apply to player
     /// \note internally uses the provided shader program and sets the necessary uniforms
     /// for the MVP and Normal Matrices as well as the material diffuse color
     void drawMe( glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx );
@@ -33,7 +33,7 @@ private:
     //angle of the wheels
     
     GLfloat _headRot = 0.05;//rotation speed of heading
-    /// \desc handle of the shader program to use when drawing the craft
+    /// \desc handle of the shader program to use when drawing the player
     GLuint _shaderProgramHandle;
     /// \desc stores the uniform locations needed for the plan information
     struct ShaderProgramUniformLocations {
@@ -47,34 +47,31 @@ private:
         GLint model;
     } _shaderProgramUniformLocations;
 
-    /// \desc angle to rotate our craft at
-    GLfloat _rotateCraftAngle;
-
     /// \desc color BREAD
     glm::vec3 _breadColor;
     /// \desc color BREAD ACCENT
     glm::vec3 _accentColor;
     /// \desc color BUTTER
     glm::vec3 _butterColor;
-    /// \desc amount to scale the craft's body by
+    /// \desc amount to scale the player's body by
     glm::vec3 _scaleBody;
     
     GLint _frameI=0;//frame index
 
-    /// \desc draws just the craft's body
-    /// \param modelMtx existing model matrix to apply to craft
-    /// \param viewMtx camera view matrix to apply to craft
-    /// \param projMtx camera projection matrix to apply to craft
+    /// \desc draws just the player's body
+    /// \param modelMtx existing model matrix to apply to player
+    /// \param viewMtx camera view matrix to apply to player
+    /// \param projMtx camera projection matrix to apply to player
     void _drawBody(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) const;
-    /// \desc draws the nose of the craft
-    /// \param modelMtx existing model matrix to apply to craft
-    /// \param viewMtx camera view matrix to apply to craft
-    /// \param projMtx camera projection matrix to apply to craft
+    /// \desc draws the nose of the player
+    /// \param modelMtx existing model matrix to apply to player
+    /// \param viewMtx camera view matrix to apply to player
+    /// \param projMtx camera projection matrix to apply to player
     void _drawBack(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) const;
-    /// \desc draws the tail of the craft
-    /// \param modelMtx existing model matrix to apply to craft
-    /// \param viewMtx camera view matrix to apply to craft
-    /// \param projMtx camera projection matrix to apply to craft
+    /// \desc draws the tail of the player
+    /// \param modelMtx existing model matrix to apply to player
+    /// \param viewMtx camera view matrix to apply to player
+    /// \param projMtx camera projection matrix to apply to player
     void _drawFront(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) const;
 
     /// \desc precomputes the matrix uniforms CPU-side and then sends them
