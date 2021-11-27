@@ -299,14 +299,11 @@ void Engine::_generateEnvironment() {
             }
         }
     }
-    glm::mat4 transToSpotMtxW = glm::translate( glm::mat4(1.0), glm::vec3(WORLD_SIZE/2, 0.0f, WORLD_SIZE/2) );
+    glm::mat4 transToSpotMtxW = glm::translate( glm::mat4(1.0), glm::vec3(-WORLD_SIZE/2, 0.0f, -WORLD_SIZE/2));
     glm::mat4 modelMatrixW = transToSpotMtxW;
     glm::vec3 colorW( 1, 1, 1);
     BuildingData currentBuildingW = {modelMatrixW, colorW};
     _buildings.emplace_back( currentBuildingW );
-    transToSpotMtxW = glm::translate( glm::mat4(1.0), glm::vec3(-WORLD_SIZE/2, 0.0f, -WORLD_SIZE/2));
-    currentBuildingW = {transToSpotMtxW, colorW};
-    _buildings.emplace_back( currentBuildingW);
 
 }
 
