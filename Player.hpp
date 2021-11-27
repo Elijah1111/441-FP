@@ -20,19 +20,17 @@ public:
     /// \param projMtx camera projection matrix to apply to player
     /// \note internally uses the provided shader program and sets the necessary uniforms
     /// for the MVP and Normal Matrices as well as the material diffuse color
-    void drawMe( glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx );
+	void drawMe( glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx );
     
-    void frame();//increase frame number
+    
+	void moveLeft(double);//move left
+	void moveRight(double);//move right
+    
+	void frame();//increase frame number
 
-    void turnLeft();//change the heading
-    void turnRight();
-    glm::vec3 pos = glm::vec3(5,0,0);//where the vehicle is in space
-    GLfloat heading = 0.0;//current heading
-    glm::vec3 fpPos = glm::vec3(0.0,0.4,0.3);//where the FP camera should be pointing in local space
+    glm::vec3 pos = glm::vec3(5,0,0);//where the player is in space
 private:
-    //angle of the wheels
     
-    GLfloat _headRot = 0.05;//rotation speed of heading
     /// \desc handle of the shader program to use when drawing the player
     GLuint _shaderProgramHandle;
     /// \desc stores the uniform locations needed for the plan information
@@ -54,7 +52,7 @@ private:
     /// \desc color BUTTER
     glm::vec3 _butterColor;
     /// \desc amount to scale the player's body by
-    glm::vec3 _scaleBody;
+    glm::vec3 _scaleBody;//TODO this does nothing
     
     GLint _frameI=0;//frame index
 

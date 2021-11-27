@@ -20,29 +20,37 @@ Player::Player( GLuint shaderProgramHandle, GLint mvpMtxUniformLocation, GLint n
     _breadColor = glm::vec3( 0.776f,0.537f,0.345f);
     _accentColor = glm::vec3( 0.952f,0.835f,0.647f);
     _butterColor = glm::vec3( 0.9f,0.9f,0.0f);
-    _scaleBody = glm::vec3( 2.0f, 0.5f, 1.0f );
+    _scaleBody = glm::vec3( 3.0f, 3.5f, 3.0f );//TODO this does nothing
 }
 
+
+void Player::moveLeft(double s){
+	double tmp = pos[2];
+	tmp += s;
+	if (fabs(tmp) >= 10)//Bounds Check
+            return;
+	pos[2] = tmp;
+}
+
+void Player::moveRight(double s){
+	double tmp = pos[2];
+	tmp -= s;
+	if (fabs(tmp) >= 10)//Bounds Check
+            return;
+	pos[2] = tmp;
+}
+
+
 void Player::drawMe( glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) {
-    glUseProgram( _shaderProgramHandle );
+    frame();//increase frame counter
+	glUseProgram( _shaderProgramHandle );
 	
-    modelMtx = glm::rotate( modelMtx, heading, CSCI441::Y_AXIS );
     modelMtx = glm::translate( modelMtx, glm::vec3 (0,0.05*(sin(M_PI/128*_frameI)+1),0) );
     
     _computeAndSendMatrixUniforms(modelMtx, viewMtx, projMtx);
     _drawBody(modelMtx, viewMtx, projMtx);        // the body of our plane
     _drawBack(modelMtx, viewMtx, projMtx);        // the nose
     _drawFront(modelMtx, viewMtx, projMtx);        // the tail
-}
-
-void Player::turnLeft() {
-    heading += _headRot;
-    if( heading > 2.0f * M_PI ) heading -= 2.0f * M_PI;//clamp heading
-}
-
-void Player::turnRight() {
-    heading -= _headRot;
-    if( heading < 0.0f ) heading += 2.0f * M_PI;
 }
 
 void Player::_drawBody(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) const {

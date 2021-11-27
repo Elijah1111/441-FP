@@ -187,7 +187,7 @@ void Engine::_createObstacle(){
 		// compute random color
 		glm::vec3 color( getRand(), getRand(), getRand() );
 		// store building properties
-		Obstacle ob(glm::vec3(0,0,p), modelMatrix, color, getRand()*0.20f + 0.05);
+		Obstacle ob(glm::vec3(0,0,p), modelMatrix, color, getRand()*0.20f + 0.05, height);
 		_obs.emplace_back( ob );
 		std::cout<<"MADE OBS!!!\n";
 }
@@ -425,7 +425,7 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
     //// END DRAWING THE GREEN SUN////
     
     //// BEGIN DRAWING THE RED CONE////
-    tmp = glm::translate( glm::mat4(1.0), glm::vec3(0, 
+    tmp = glm::translate( glm::mat4(1.0), glm::vec3(5, 
 			    7.80f, 0));
     _computeAndSendMatrixUniforms(tmp, viewMtx, projMtx);
     glm::vec3 red = glm::vec3(1,0,0);
@@ -488,7 +488,6 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
     glm::mat4 modelMtx0 = glm::translate( modelMtx, _player->pos );
     
     // draw our craft now
-    _player->frame();
     _player->drawMe( modelMtx0, viewMtx, projMtx );
     
     //// END DRAWING MODELS ////
@@ -498,18 +497,10 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
 void Engine::_updateScene() {
 	// player Move 
 	if (_keys[GLFW_KEY_A]) {//move left
-		glm::vec3 pos = _player->pos;
-		pos[2] += _camStat.speed.x * 5;
-		if (fabs(pos[2]) >= 10)//Bounds Check
-			return;
-		_player->pos = pos;
+		_player->moveLeft(_camStat.speed.x * 5);
 	}
 	if (_keys[GLFW_KEY_D]) {//Move Right
-		glm::vec3 pos = _player->pos;
-		pos[2] -= _camStat.speed.x * 5;
-		if (fabs(pos[2]) >= 10)//BoundsCheck
-			return;
-		_player->pos = pos;
+		_player->moveRight(_camStat.speed.x * 5);
 	}
         // free cam
 		if(_keys[GLFW_KEY_0]){

@@ -1,12 +1,11 @@
 #include "Obstacle.hpp"
 
-Obstacle::Obstacle(glm::vec3 pos, glm::mat4 model, glm::vec3 color, double s){
+Obstacle::Obstacle(glm::vec3 pos, glm::mat4 model, glm::vec3 color, double s, double h){
 		this->speed = s;
 		this->pos = pos;
 		this->modelMatrix = model;
 		this->color = color;
 }
-
 
 bool Obstacle::step(){//step along by speed
 	glm::vec3 tmp = this->pos;

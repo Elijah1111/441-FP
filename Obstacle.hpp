@@ -10,7 +10,7 @@ public:
 	glm::vec3 pos;//position
 	double speed;//speed
 
-	Obstacle(glm::vec3 pos, glm::mat4 model, glm::vec3 color, double speed);
+	Obstacle(glm::vec3 pos, glm::mat4 model, glm::vec3 color, double speed, double h);
 	
 	bool step();
 	glm::mat4 modelMatrix;
