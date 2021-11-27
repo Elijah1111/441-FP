@@ -495,13 +495,15 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
 }
 
 void Engine::_updateScene() {
-	// player Move 
-	if (_keys[GLFW_KEY_A]) {//move left
-		_player->moveLeft(_camStat.speed.x * 5);
-	}
-	if (_keys[GLFW_KEY_D]) {//Move Right
-		_player->moveRight(_camStat.speed.x * 5);
-	}
+		// player Move 
+		if (_keys[GLFW_KEY_A]) {//move left
+			_player->moveLeft(_camStat.speed.x * 5);
+		}
+		if (_keys[GLFW_KEY_D]) {//Move Right
+			_player->moveRight(_camStat.speed.x * 5);
+		}
+		if (_keys[GLFW_KEY_W])
+				_player->jump();
         // free cam
 		if(_keys[GLFW_KEY_0]){
 			_camStat.free = !_camStat.free;

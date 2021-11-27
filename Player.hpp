@@ -25,12 +25,17 @@ public:
     
 	void moveLeft(double);//move left
 	void moveRight(double);//move right
-    
+	
+	void jump();//jump
+
 	void frame();//increase frame number
 
     glm::vec3 pos = glm::vec3(5,0,0);//where the player is in space
 private:
-    
+    const float G = 0.1;//gravity 
+	bool airborn   = false;//have we jumped?
+	float accel   = 0.0;//acceleration 
+
     /// \desc handle of the shader program to use when drawing the player
     GLuint _shaderProgramHandle;
     /// \desc stores the uniform locations needed for the plan information

@@ -5,6 +5,8 @@
 #include <CSCI441/objects.hpp>
 #include <CSCI441/OpenGLUtils.hpp>
 
+#include <iostream>//TODO remove me
+
 #ifndef M_PI
 #define M_PI 3.14159265
 #endif
@@ -40,6 +42,13 @@ void Player::moveRight(double s){
 	pos[2] = tmp;
 }
 
+void Player::jump(){
+	if (airborn){//no double jump... yet
+			return;
+	}
+	airborn = true;
+	accel = 1;//set accel upward to 10
+}
 
 void Player::drawMe( glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) {
     frame();//increase frame counter
@@ -111,6 +120,20 @@ void Player::_drawFront(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx
 void Player::frame(){//increment frame
 	_frameI++;
 	_frameI %= 256;
+	if(airborn){//we are in the air
+		float* tmp = &pos[1];
+		(*tmp) += accel;
+		if((*tmp) <= 0){//we have hit the ground
+			(*tmp) = 0;
+			accel = 0;
+			airborn = false;	
+			std::cout<<"TouchDown!\n";
+		}
+		else{	
+			accel -= G;
+		}
+	}
+
 }
 
 void Player::_computeAndSendMatrixUniforms(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx) const {
