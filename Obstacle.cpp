@@ -5,6 +5,7 @@ Obstacle::Obstacle(glm::vec3 pos, glm::mat4 model, glm::vec3 color, double s, do
 		this->pos = pos;
 		this->modelMatrix = model;
 		this->color = color;
+		this->h = h;
 }
 
 bool Obstacle::step(){//step along by speed
@@ -23,4 +24,10 @@ bool Obstacle::offScreen(){
 	if(p <= -bound - 5)//delete when it gets out of bounds
 		return true;
 	return false;		
+}
+
+void Obstacle::collide(Player p){//did the player collide with me?
+
+
+
 }

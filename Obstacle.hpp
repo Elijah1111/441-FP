@@ -3,7 +3,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-
+#include "Player.hpp"
 class Obstacle{//A class to track Obstacles
 public:
 	
@@ -15,9 +15,12 @@ public:
 	bool step();
 	glm::mat4 modelMatrix;
 	glm::vec3 color;
+	void collide(Player);
 private:
 	bool offScreen();//check if the position is off screen and delete
 	double bound = 20;//World Bounds
+	double h; 
+
 };
 
 #endif

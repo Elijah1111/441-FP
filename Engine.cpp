@@ -18,6 +18,17 @@ GLfloat getRand() {
     return (GLfloat)rand() / (GLfloat)RAND_MAX;
 }
 
+double findDist(glm::vec3 P0, glm::vec3 P1){
+	//a helper function to find distance between two points
+	double x = pow(P0[0] - P1[0],2);
+	double y = pow(P0[1] - P1[1],2);
+	double z = pow(P0[2] - P1[2],2);
+	
+	float tmp = pow(x+y+z,0.5);
+	std::cout<<"DISTANCE: "<<tmp<<"\n";
+	return tmp;
+}
+
 //*************************************************************************************
 //
 // Public Interface
@@ -189,7 +200,6 @@ void Engine::_createObstacle(){
 		// store building properties
 		Obstacle ob(glm::vec3(0,0,p), modelMatrix, color, getRand()*0.20f + 0.05, height);
 		_obs.emplace_back( ob );
-		std::cout<<"MADE OBS!!!\n";
 }
 
 void Engine::_createGroundBuffers() {
@@ -469,7 +479,6 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
 	}
 	for(int i : remove){//remove obstacls that have gone out of bounds
 			_obs.erase(_obs.begin() + i);
-			std::cout<<"Remove Obstacle\n";
 	}
 	//// END DRAWING OBSTACLES ////
 	
@@ -608,16 +617,6 @@ void Engine::_computeAndSendMatrixUniforms(glm::mat4 modelMtx, glm::mat4 viewMtx
 }
 
 
-double findDist(glm::vec3 P0, glm::vec3 P1){
-	//a helper function to find distance between two points
-	double x = pow(P0[0] - P1[0],2);
-	double y = pow(P0[1] - P1[1],2);
-	double z = pow(P0[2] - P1[2],2);
-	
-	float tmp = pow(x+y+z,0.5);
-	std::cout<<"DISTANCE: "<<tmp<<"\n";
-	return tmp;
-}
 
 void Engine::_setupTextures(){
 			

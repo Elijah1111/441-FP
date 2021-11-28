@@ -57,12 +57,12 @@ void Player::drawMe( glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) 
     modelMtx = glm::translate( modelMtx, glm::vec3 (0,0.05*(sin(M_PI/128*_frameI)+1),0) );
     
     _computeAndSendMatrixUniforms(modelMtx, viewMtx, projMtx);
-    _drawBody(modelMtx, viewMtx, projMtx);        // the body of our plane
-    _drawBack(modelMtx, viewMtx, projMtx);        // the nose
-    _drawFront(modelMtx, viewMtx, projMtx);        // the tail
+    _drawBody(modelMtx, viewMtx, projMtx);        // the body
+    _drawBack(modelMtx, viewMtx, projMtx);        // the rear
+    _drawFront(modelMtx, viewMtx, projMtx);        // the cone
 }
 
-void Player::_drawBody(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) const {
+void Player::_drawBody(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) const {//TODO change the model out for whatever we are using
     GLfloat  h = 0.05;
     _computeAndSendMatrixUniforms(modelMtx, viewMtx, projMtx);
 
@@ -121,16 +121,15 @@ void Player::frame(){//increment frame
 	_frameI++;
 	_frameI %= 256;
 	if(airborn){//we are in the air
-		float* tmp = &pos[1];
+		float* tmp = &pos[1];//faster to use pointers?
 		(*tmp) += accel;
 		if((*tmp) <= 0){//we have hit the ground
 			(*tmp) = 0;
 			accel = 0;
 			airborn = false;	
-			std::cout<<"TouchDown!\n";
 		}
 		else{	
-			accel -= G;
+			accel -= G;//change the acceleration
 		}
 	}
 
