@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 project(final)#TODO change this name to something cooler
 set(CMAKE_CXX_STANDARD 17)
-set(SOURCE_FILES main.cpp Engine.cpp Engine.hpp Player.cpp Player.hpp Obstacle.hpp Obstacle.cpp)
+set(SOURCE_FILES main.cpp Engine.cpp Engine.hpp Player.cpp Player.hpp Obstacle.hpp Obstacle.cpp CustomObjects.cpp CustomObjects.hpp)
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 # Windows with MinGW Installations

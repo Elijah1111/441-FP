@@ -27,19 +27,19 @@ Player::Player( GLuint shaderProgramHandle, GLint mvpMtxUniformLocation, GLint n
 
 
 void Player::moveLeft(double s){
-	double tmp = pos[2];
+	double tmp = pos.z;
 	tmp += s;
 	if (fabs(tmp) >= 10)//Bounds Check
             return;
-	pos[2] = tmp;
+	pos.z = tmp;
 }
 
 void Player::moveRight(double s){
-	double tmp = pos[2];
+	double tmp = pos.z;
 	tmp -= s;
 	if (fabs(tmp) >= 10)//Bounds Check
             return;
-	pos[2] = tmp;
+	pos.z = tmp;
 }
 
 void Player::jump(){
