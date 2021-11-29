@@ -1,4 +1,5 @@
 #include "Player.hpp"
+#include "CustomObjects.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -23,6 +24,7 @@ Player::Player( GLuint shaderProgramHandle, GLint mvpMtxUniformLocation, GLint n
     _accentColor = glm::vec3( 0.952f,0.835f,0.647f);
     _butterColor = glm::vec3( 0.9f,0.9f,0.0f);
     _scaleBody = glm::vec3( 3.0f, 3.5f, 3.0f );//TODO this does nothing
+
 }
 
 
@@ -57,6 +59,7 @@ void Player::drawMe( glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) 
     modelMtx = glm::translate( modelMtx, glm::vec3 (0,0.05*(sin(M_PI/128*_frameI)+1),0) );
     
     _computeAndSendMatrixUniforms(modelMtx, viewMtx, projMtx);
+    CustomObjects::drawCar();
     _drawBody(modelMtx, viewMtx, projMtx);        // the body
     _drawBack(modelMtx, viewMtx, projMtx);        // the rear
     _drawFront(modelMtx, viewMtx, projMtx);        // the cone

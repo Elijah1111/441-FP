@@ -1,4 +1,5 @@
 #include "Engine.hpp"
+#include "CustomObjects.hpp"
 #include <stdlib.h>
 #include <CSCI441/objects.hpp>
 #include<iostream>
@@ -174,7 +175,11 @@ void Engine::_setupBuffers() {
                        _lightingShaderUniformLocations.materialColor,
                        _lightingShaderUniformLocations.model
                        );
-    
+    CustomObjects::setupShaders(
+            _lightingShaderProgram->getShaderProgramHandle(),
+            _lightingShaderAttributeLocations.vPos,
+            _lightingShaderAttributeLocations.vNorm
+            );
 	_createGroundBuffers();
     _generateEnvironment();
 }
