@@ -22,7 +22,6 @@ public:
     /// for the MVP and Normal Matrices as well as the material diffuse color
 	void drawMe( glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx );
     
-    
 	void moveLeft(double);//move left
 	void moveRight(double);//move right
 	
@@ -60,22 +59,6 @@ private:
     glm::vec3 _scaleBody;//TODO this does nothing
     
     GLint _frameI=0;//frame index
-
-    /// \desc draws just the player's body
-    /// \param modelMtx existing model matrix to apply to player
-    /// \param viewMtx camera view matrix to apply to player
-    /// \param projMtx camera projection matrix to apply to player
-    void _drawBody(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) const;
-    /// \desc draws the nose of the player
-    /// \param modelMtx existing model matrix to apply to player
-    /// \param viewMtx camera view matrix to apply to player
-    /// \param projMtx camera projection matrix to apply to player
-    void _drawBack(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) const;
-    /// \desc draws the tail of the player
-    /// \param modelMtx existing model matrix to apply to player
-    /// \param viewMtx camera view matrix to apply to player
-    /// \param projMtx camera projection matrix to apply to player
-    void _drawFront(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) const;
 
     /// \desc precomputes the matrix uniforms CPU-side and then sends them
     /// to the GPU to be used in the shader for each vertex.  It is more efficient
