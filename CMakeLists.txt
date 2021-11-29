@@ -22,7 +22,7 @@ elseif( APPLE AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
     target_link_directories(${PROJECT_NAME} PUBLIC "/usr/local/lib")
     target_link_directories(${PROJECT_NAME} PUBLIC "./include")
     target_link_directories(${PROJECT_NAME} PUBLIC "./lib/")
-    target_link_libraries(${PROJECT_NAME} "-framework OpenGL" "-framework Cocoa" "-framework IOKit" "-framework CoreVideo" glfw3 glew stbimage)
+    target_link_libraries(${PROJECT_NAME} "-framework OpenGL" "-framework Cocoa" "-framework IOKit" "-framework CoreVideo" GLFW glew stbimage)
 # Blanket *nix Installations
 elseif( UNIX AND ${CMAKE_SYSTEM_NAME} MATCHES "Linux" )
     include_directories("/usr/local/include")

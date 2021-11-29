@@ -5,3 +5,6 @@ cmake_install.cmake
 fp
 *.swp
 final
+cmake-build-debug/
+.idea
+
