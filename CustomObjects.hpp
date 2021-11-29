@@ -3,7 +3,7 @@
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
-
+#include <vector>
 #include "HelperStructs.hpp"
 #include "CSCI441/ModelLoader.hpp"
 
@@ -22,11 +22,13 @@ public:
     static void drawTreeTrunk();
     static void drawWheel();
     static void clearObjects();
+    static void drawHorse(int frame);
 
 private:
     void _setupBuffersCube();
     void _setupBuffersPlane();
     void _setupBuffersCar();
+    void _setupBuffersHorse();
     void _setupBuffersTreeTop();
     void _setupBuffersTreeTrunk();
     void _setupBuffersWheel();
@@ -42,6 +44,9 @@ private:
     CSCI441::ModelLoader *_modelTreeTop;
     CSCI441::ModelLoader *_modelTreeTrunk;
     CSCI441::ModelLoader *_modelWheel;
+    std::vector<CSCI441::ModelLoader*> _modelHorse;
+
+
 };
 
 #endif // MP_CUSTOM_OBJECTS_HPP

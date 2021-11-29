@@ -55,14 +55,14 @@ void Player::jump(){
 void Player::drawMe( glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) {
     frame();//increase frame counter
 	glUseProgram( _shaderProgramHandle );
-	
+	t++;
     modelMtx = glm::translate( modelMtx, glm::vec3 (0,0.05*(sin(M_PI/128*_frameI)+1),0) );
     
     _computeAndSendMatrixUniforms(modelMtx, viewMtx, projMtx);
-    CustomObjects::drawCar();
-    _drawBody(modelMtx, viewMtx, projMtx);        // the body
-    _drawBack(modelMtx, viewMtx, projMtx);        // the rear
-    _drawFront(modelMtx, viewMtx, projMtx);        // the cone
+    CustomObjects::drawHorse(t);
+//    _drawBody(modelMtx, viewMtx, projMtx);        // the body
+//    _drawBack(modelMtx, viewMtx, projMtx);        // the rear
+//    _drawFront(modelMtx, viewMtx, projMtx);        // the cone
 }
 
 void Player::_drawBody(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) const {//TODO change the model out for whatever we are using

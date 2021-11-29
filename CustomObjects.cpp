@@ -48,6 +48,14 @@ void CustomObjects::drawCar()
     }
     instance()._modelCar->draw(instance()._shaderProgramHandle);
 }
+void CustomObjects::drawHorse(int frame)
+{
+    if (instance()._modelHorse.size() == 0)
+    {
+        instance()._setupBuffersHorse();
+    }
+    instance()._modelHorse[frame%48]->draw(instance()._shaderProgramHandle);
+}
 
 //for thisisntme
 void CustomObjects::drawWheel()
@@ -170,6 +178,23 @@ void CustomObjects::_setupBuffersPlane()
     _modelPlane = new CSCI441::ModelLoader();
     _modelPlane->loadModelFile("models/subdivided_plane.obj");
     _modelPlane->setAttributeLocations(instance()._shaderAttribPos, instance()._shaderAttribNormal);
+}
+
+void CustomObjects::_setupBuffersHorse()
+{
+    for(int i = 1; i <= 48; i++){
+        _modelHorse.push_back(new CSCI441::ModelLoader());
+        string fileNum = to_string(i);
+        if(i < 10 ){
+            fileNum = "0" +  fileNum;
+        }
+        string fileString = "models/horse-gallop/horse-gallop-" + fileNum+".obj";
+        char* charArr= &fileString[0];
+        _modelHorse[i-1]->loadModelFile(charArr);
+        _modelHorse[i-1]->setAttributeLocations(instance()._shaderAttribPos, instance()._shaderAttribNormal);
+    }
+
+
 }
 
 void CustomObjects::_setupBuffersCar()
