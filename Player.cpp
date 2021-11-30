@@ -60,65 +60,8 @@ void Player::drawMe( glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) 
     
     _computeAndSendMatrixUniforms(modelMtx, viewMtx, projMtx);
     CustomObjects::drawHorse(t);
-//    _drawBody(modelMtx, viewMtx, projMtx);        // the body
-//    _drawBack(modelMtx, viewMtx, projMtx);        // the rear
-//    _drawFront(modelMtx, viewMtx, projMtx);        // the cone
 }
 
-void Player::_drawBody(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) const {//TODO change the model out for whatever we are using
-    GLfloat  h = 0.05;
-    _computeAndSendMatrixUniforms(modelMtx, viewMtx, projMtx);
-
-    glUniform3fv(_shaderProgramUniformLocations.materialColor, 1, &_breadColor[0]);
-	
-    CSCI441::drawSolidCylinder(0.3,0.3,h,100,100);
-    modelMtx = glm::translate( modelMtx, glm::vec3 (0,h,0) );
-    modelMtx = glm::rotate( modelMtx, (GLfloat)(-M_PI/2.0f), CSCI441::X_AXIS );
-    _computeAndSendMatrixUniforms(modelMtx, viewMtx, projMtx);
-   
-    CSCI441::drawSolidDisk(0, 0.3,100,100);
-    
-    modelMtx = glm::translate( modelMtx, glm::vec3 (0,0,0.005) );
-    _computeAndSendMatrixUniforms(modelMtx, viewMtx, projMtx);
-    
-    glUniform3fv(_shaderProgramUniformLocations.materialColor, 1, &_accentColor[0]);
-    CSCI441::drawSolidDisk(0, 0.25,100,100);//draw an accent circle
-}
-
-
-void Player::_drawBack(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) const {
-    
-	modelMtx = glm::translate( modelMtx, glm::vec3 (0,0,-0.2) );
-    
-	_computeAndSendMatrixUniforms(modelMtx, viewMtx, projMtx);
-
-    glUniform3fv(_shaderProgramUniformLocations.materialColor, 1, &_breadColor[0]);
-
-    CSCI441::drawSolidCylinder(0.03,0.03,0.2,100,100);
-	
-    glm::mat4 tmp = glm::translate( modelMtx, glm::vec3 (0,0.2,0) );
-    tmp = glm::rotate( tmp, (GLfloat)(-M_PI/2.0f), CSCI441::X_AXIS );
-    _computeAndSendMatrixUniforms(tmp, viewMtx, projMtx);
-    
-    CSCI441::drawSolidDisk(0, 0.03,100,100);//add a top
-	
-    modelMtx = glm::translate( modelMtx, glm::vec3 (0,0.15,0) );
-    modelMtx = glm::rotate( modelMtx, (GLfloat)(-M_PI/2.0f), CSCI441::X_AXIS );
-    _computeAndSendMatrixUniforms(modelMtx, viewMtx, projMtx);
-
-    glUniform3fv(_shaderProgramUniformLocations.materialColor, 1, &_accentColor[0]);
-    CSCI441::drawSolidCylinder(0.02,0.02,0.1,100,100);//add exaughst pipe
-}
-
-void Player::_drawFront(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) const {
-	
-    modelMtx = glm::translate( modelMtx, glm::vec3 (0,0,0.2) );
-    _computeAndSendMatrixUniforms(modelMtx, viewMtx, projMtx);
-
-    glUniform3fv(_shaderProgramUniformLocations.materialColor, 1, &_butterColor[0]);
-
-    CSCI441::drawSolidCone( 0.02, 0.125, 16, 16 );
-}
 
 void Player::frame(){//increment frame
 	_frameI++;
