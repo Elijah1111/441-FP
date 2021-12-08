@@ -56,6 +56,7 @@ private:
 
 	void _createSkybox();
 	GLuint _loadAndRegisterTexture(const char*);
+    GLuint _loadAndRegisterFlatTexture(const char*);
 	
 	struct skybox{
 		GLuint handle;
@@ -138,7 +139,8 @@ private:
 
     /// \desc shader program that performs lighting
     CSCI441::ShaderProgram* _lightingShaderProgram = nullptr;   // the wrapper for our shader program
-        CSCI441::ShaderProgram* _textureShaderProgram = nullptr;   // the wrapper for our shader program
+    CSCI441::ShaderProgram* _textureShaderProgram = nullptr;   // the wrapper for our shader program
+    CSCI441::ShaderProgram* _bumpShaderProgram = nullptr;
 
 	/// \desc stores the locations of all of our shader uniforms
     struct LightingShaderUniformLocations {
@@ -165,6 +167,18 @@ private:
         GLint texMap;
 
     } _textureShaderUniformLocations;
+
+    struct BumpShaderUniformLocation {
+        GLint mvpMatrix;
+        GLint model;
+
+        GLint lPos;
+
+        GLint vPos;
+
+        GLint texMap;
+        GLint norMap;
+    } _bumpShaderUniformLocations;
 
 
     struct pointLight{
@@ -193,6 +207,13 @@ private:
         /// \desc vertex normal
         GLint vNorm;
     } _lightingShaderAttributeLocations;
+
+    struct BumpShaderAttributeLocations {
+        GLint aPos;
+        GLint aNormal;
+        GLint aTexCoord;
+        GLint aTangent;
+    } _bumpShaderAttributeLocations;
 
     bool _rightPressed = false;
 

@@ -163,6 +163,21 @@ void Engine::_setupShaders() {
 	_textureShaderProgram->setProgramUniform(//set the static texmap
 			_textureShaderUniformLocations.texMap,0);
 
+    _bumpShaderProgram = new CSCI441::ShaderProgram("shaders/bump.v.glsl",
+                                                    "shaders/bump.f.glsl");
+
+    _bumpShaderUniformLocations.mvpMatrix = _bumpShaderProgram->getUniformLocation("mvpMatrix");
+    _bumpShaderUniformLocations.model = _bumpShaderProgram->getUniformLocation("model");
+    _bumpShaderUniformLocations.lPos = _bumpShaderProgram->getUniformLocation("lPos");
+    _bumpShaderUniformLocations.vPos = _bumpShaderProgram->getUniformLocation("vPos");
+    _bumpShaderUniformLocations.texMap = _bumpShaderProgram->getUniformLocation("texMap");
+    _bumpShaderUniformLocations.norMap = _bumpShaderProgram->getUniformLocation("norMap");
+
+    _bumpShaderAttributeLocations.aPos = _bumpShaderProgram->getAttributeLocation("aPos");
+    _bumpShaderAttributeLocations.aNormal = _bumpShaderProgram->getAttributeLocation("aNormal");
+    _bumpShaderAttributeLocations.aTexCoord = _bumpShaderProgram->getAttributeLocation("aTexCoord");
+    _bumpShaderAttributeLocations.aTangent = _bumpShaderProgram->getAttributeLocation("aTangent");
+
 }
 
 void Engine::_setupBuffers() {
@@ -376,6 +391,7 @@ void Engine::_cleanupShaders() {
     fprintf( stdout, "[INFO]: ...deleting Shaders.\n" );
     delete _lightingShaderProgram;
 	delete _textureShaderProgram;
+    delete _bumpShaderProgram;
 
 }
 
@@ -672,6 +688,34 @@ GLuint Engine::_loadAndRegisterTexture(const char* FILENAME) {
 	fprintf( stdout, "[INFO]: %s texture map read in with handle %d\n",
 				   	FILENAME, textureHandle);
     return textureHandle;
+}
+
+GLuint Engine::_loadAndRegisterFlatTexture(const char* FILENAME) {
+    GLuint texHandle = 0;
+
+    stbi_set_flip_vertically_on_load(true);
+
+    GLint imageWidth, imageHeight, imageChannels;
+
+    GLubyte* data = stbi_load(FILENAME, &imageWidth, &imageHeight, &imageChannels, 0);
+
+    if(data){
+        const GLint STORAGE_TYPE = (imageChannels == 4 ? GL_RGBA : GL_RGB);
+
+        glGenTextures(1, &texHandle);
+        glBindTexture(GL_TEXTURE_2D, texHandle);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, STORAGE_TYPE, imageWidth, imageHeight, 0, STORAGE_TYPE, GL_UNSIGNED_BYTE, data);
+        fprintf(stdout, "[INFO]: %s texture map read with handle %d\n", FILENAME, texHandle);
+    } else {
+        fprintf(stdout, "[ERROR]: Failed to load texture: \"%s\"\n", FILENAME);
+    }
+
+    return texHandle;
 }
 //*************************************************************************************
 //
