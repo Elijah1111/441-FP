@@ -10,7 +10,7 @@
 // Our main function
 int main(int argc, char *argv[]) {	
 	
-    auto engine = new Engine(4, 1, 640, 480, "FP: There And Back Again");
+    auto engine = new Engine(4, 1, 640, 480, "FP:There And Back Again");
 	engine->initialize();
     if (engine->getError() == CSCI441::OpenGLEngine::OPENGL_ENGINE_ERROR_NO_ERROR) {
         engine->run();
