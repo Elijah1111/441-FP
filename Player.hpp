@@ -49,12 +49,6 @@ private:
         GLint model;
     } _shaderProgramUniformLocations;
 
-    /// \desc color BREAD
-    glm::vec3 _breadColor;
-    /// \desc color BREAD ACCENT
-    glm::vec3 _accentColor;
-    /// \desc color BUTTER
-    glm::vec3 _butterColor;
     /// \desc amount to scale the player's body by
     glm::vec3 _scaleBody;//TODO this does nothing
     

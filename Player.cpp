@@ -20,9 +20,6 @@ Player::Player( GLuint shaderProgramHandle, GLint mvpMtxUniformLocation, GLint n
     _shaderProgramUniformLocations.materialColor    = materialColorUniformLocation;
     _shaderProgramUniformLocations.model            = mMtxUniformLocation;
 
-    _breadColor = glm::vec3( 0.776f,0.537f,0.345f);
-    _accentColor = glm::vec3( 0.952f,0.835f,0.647f);
-    _butterColor = glm::vec3( 0.9f,0.9f,0.0f);
     _scaleBody = glm::vec3( 3.0f, 3.5f, 3.0f );//TODO this does nothing
 
 }

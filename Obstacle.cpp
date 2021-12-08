@@ -6,6 +6,9 @@ Obstacle::Obstacle(glm::vec3 pos, glm::mat4 model, glm::vec3 color, double s, do
 		this->modelMatrix = model;
 		this->color = color;
 		this->h = h;
+		for(int i=0; i<4; i++){
+			bBox[i] = model* bBox[i];//adjust the bounding box for the model
+		}
 }
 
 bool Obstacle::step(){//step along by speed
@@ -17,7 +20,6 @@ bool Obstacle::step(){//step along by speed
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(0,0,speed));
 	return offScreen();//check if off screen
 }
-
 bool Obstacle::offScreen(){
 	double p = this->pos[2];
 
@@ -26,8 +28,9 @@ bool Obstacle::offScreen(){
 	return false;		
 }
 
-void Obstacle::collide(Player p){//did the player collide with me?
-
-
-
+bool Obstacle::collide(Player* p){//did the player collide with me?
+	for(int i=0; i<4; i++){
+		
+	}
+	return true;
 }
