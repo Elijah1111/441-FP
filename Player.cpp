@@ -20,10 +20,7 @@ Player::Player( GLuint shaderProgramHandle, GLint mvpMtxUniformLocation, GLint n
     _shaderProgramUniformLocations.materialColor    = materialColorUniformLocation;
     _shaderProgramUniformLocations.model            = mMtxUniformLocation;
 
-    _scaleBody = glm::vec3( 3.0f, 3.5f, 3.0f );//TODO this does nothing
-
 }
-
 
 void Player::moveLeft(double s){
 	double tmp = pos.z;
@@ -57,6 +54,10 @@ void Player::drawMe( glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) 
     
     _computeAndSendMatrixUniforms(modelMtx, viewMtx, projMtx);
     CustomObjects::drawHorse(t);
+	for(int i=0; i<4; i++){//update bounding Box
+        bBox[i] = modelMtx * bBoxCont[i];//adjust the bounding box for the model
+    }
+	CSCI441::drawSolidCube(1.0f);
 }
 
 
@@ -64,7 +65,7 @@ void Player::frame(){//increment frame
 	_frameI++;
 	_frameI %= 256;
 	if(airborn){//we are in the air
-		float* tmp = &pos[1];//faster to use pointers?
+		float* tmp = &pos[1];//faster to use pointers
 		(*tmp) += accel;
 		if((*tmp) <= 0){//we have hit the ground
 			(*tmp) = 0;

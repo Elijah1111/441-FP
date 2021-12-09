@@ -43,7 +43,8 @@ public:
     /// \desc what hero we have selected
     int selectedHero = 0;
 private:
-    /// \desc set up functions
+
+	/// \desc set up functions
     void _setupGLFW() final;
     void _setupOpenGL() final;
     void _setupShaders() final;
@@ -127,6 +128,7 @@ private:
 	
 
 	std::vector<Obstacle> _obs;//obstacles
+    bool pause;//pasue the obstacles
 
 
     /// \desc generates building information to make up our scene

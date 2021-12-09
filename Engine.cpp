@@ -478,8 +478,10 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
         glUniform3fv(_lightingShaderUniformLocations.materialColor, 1, &currentObs.color[0]);
 
         CSCI441::drawSolidCube(1.0);
-		if(currentObs.step())
+		if(currentObs.step(pause))
 				remove.emplace_back(i);
+		if(currentObs.collide(_player))
+				fprintf(stdout,"\nCollision\n\n");
     	_obs[i] = currentObs;
 	}
 	for(int i : remove){//remove obstacls that have gone out of bounds
@@ -563,6 +565,10 @@ void Engine::_updateScene() {
 		if(_keys[GLFW_KEY_9]){//spawn a obstale
 			_keys[GLFW_KEY_9] = false;//consume that input
     		_createObstacle();	
+		}
+		if(_keys[GLFW_KEY_1]){
+			_keys[GLFW_KEY_1] = false;//consume that input
+			pause = !pause;
 		}
 }
 
