@@ -54,10 +54,10 @@ void Player::drawMe( glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) 
     
     _computeAndSendMatrixUniforms(modelMtx, viewMtx, projMtx);
     CustomObjects::drawHorse(t);
+	//TODO rebind modelMtx, it inhereats color from the Obstacles
 	for(int i=0; i<4; i++){//update bounding Box
         bBox[i] = modelMtx * bBoxCont[i];//adjust the bounding box for the model
     }
-	CSCI441::drawSolidCube(1.0f);
 }
 
 
