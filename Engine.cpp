@@ -185,12 +185,12 @@ void Engine::_setupBuffers() {
 }
 
 void Engine::_createObstacle(){
-  		double p = 25;
+  		double p = 25;//spawn point
 		// translate to spot
 		glm::mat4 transToSpotMtx = glm::translate( glm::mat4(1.0), glm::vec3(5.0f, 0.0f, -p) );
 
 		// compute random height
-		GLdouble height = powf(getRand(), 2.5)*5 + 1;
+		GLdouble height = powf(getRand(), 2.5)*4 + 1;//TODO tweak height to be more fair
 		// scale to size
 		glm::mat4 scaleToHeightMtx = glm::scale( glm::mat4(1.0), glm::vec3(1, height, 1) );
 
@@ -205,6 +205,22 @@ void Engine::_createObstacle(){
 		// store building properties
 		Obstacle ob(glm::vec3(0,0,p), modelMatrix, color, getRand()*0.20f + 0.05, height);
 		_obs.emplace_back( ob );
+}
+
+
+void Engine::spawnControl(){
+	if(currentFrame - lastSpawnedFrame >= 100){//TODO adjust frame timing
+			if(obstacleSlots > 0){
+				GLdouble chance = getRand();
+				if(chance > 0.4){//60% chance to spawn a obstacle
+					_createObstacle();
+					obstacleSlots--;
+					lastSpawnedFrame = currentFrame;	
+					std::cout<<"Spawned!\n";
+				}
+
+			}
+	}
 }
 
 void Engine::_createGroundBuffers() {
@@ -485,6 +501,7 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
     	_obs[i] = currentObs;
 	}
 	for(int i : remove){//remove obstacls that have gone out of bounds
+			obstacleSlots++;//add a new slot in
 			_obs.erase(_obs.begin() + i);
 	}
 	//// END DRAWING OBSTACLES ////
@@ -511,6 +528,7 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
 }
 
 void Engine::_updateScene() {
+		 spawnControl();
 		// player Move 
 		if (_keys[GLFW_KEY_A]) {//move left
 			_player->moveLeft(_camStat.speed.x * 5);
@@ -603,14 +621,20 @@ void Engine::run() {
         _renderScene(viewMatrix, projectionMatrix);
         
 		_updateScene();
-
+		frame();//adjust frame timing
 
 
         glfwSwapBuffers(_window);                       // flush the OpenGL commands and make sure they get rendered!
         glfwPollEvents();				                // check for any events and signal to redraw screen
     }
 }
+void Engine::frame(){
+	currentFrame++;
+	currentFrame %= 100000000;//I dont want this overflowing if it comes to it
+	if (!currentFrame)
+			  lastSpawnedFrame=0;//prevent issues when we do rewrap around
 
+}
 //*************************************************************************************
 //
 // Private Helper FUnctions
