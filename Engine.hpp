@@ -113,6 +113,7 @@ private:
         glm::mat4 modelMatrix;
         /// \desc color to draw the building
         glm::vec3 color;
+		double pos;//position along the x axis
     };
     /// \desc information list of all the buildings to draw
     std::vector<BuildingData> _buildings;
@@ -121,8 +122,9 @@ private:
         /// \desc transformations to position and size the building
         glm::mat4 topModMatrix;
         glm::mat4 trunkModMatrix;
-	glm::vec3 green = glm::vec3(0.0,0.8,0.0);
-	glm::vec3 brown = glm::vec3(0.325,0.192,0.094);
+		double pos;//position in the x axis
+		glm::vec3 green = glm::vec3(0.0,0.8,0.0);
+		glm::vec3 brown = glm::vec3(0.325,0.192,0.094);
     };
     std::vector<TreeData> _trees;
 	
@@ -133,15 +135,16 @@ private:
 	unsigned int currentFrame = 0;//current game time
     bool pause;//pasue the obstacles
 	void _createObstacle();//creates an obstacle
-	void spawnControl();//controls spawning obstacles
+	void spawnControl(bool);//controls spawning obstacles
 	
 	void frame();//track frame updates
 
     /// \desc generates building information to make up our scene
     void _generateEnvironment();
-	
-	
-
+	void spawnBackground();//spawn more background elements	
+	bool _stepBackground(glm::mat4*, glm::mat4*, double*, bool);
+	float _backgroundSpeed = 0.25;//speed of the background	
+	unsigned int lastBackgroundFrame = 0;
 
     /// \desc shader program that performs lighting
     CSCI441::ShaderProgram* _lightingShaderProgram = nullptr;   // the wrapper for our shader program
