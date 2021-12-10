@@ -197,6 +197,9 @@ void Engine::_setupBuffers() {
             );
 	_createGroundBuffers();
     _generateEnvironment();
+
+    glGenVertexArrays( 1, &_faceVAO);
+    glGenBuffers( 1, &_faceVBO);
 }
 
 void Engine::_createObstacle(){
@@ -293,7 +296,8 @@ void Engine::_generateEnvironment() {
                 glm::mat4 transToHeight = glm::translate( glm::mat4(1.0), glm::vec3(0, height/2.0f, 0) );
 
                 // compute full model matrix
-                glm::mat4 modelMatrix = transToHeight * scaleToHeightMtx * transToSpotMtx;
+                //glm::mat4 modelMatrix = transToHeight * scaleToHeightMtx * transToSpotMtx;
+                glm::mat4 modelMatrix = transToHeight * transToSpotMtx;
 
                 // compute random color
                 glm::vec3 color( getRand(), getRand(), getRand() );
@@ -435,7 +439,7 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
     for(auto &b : _bumps){
         mvpMtx = projMtx * viewMtx * b.modelMatrix;
 
-        _bumpShaderProgram->setProgramUniform( _bumpShaderUniformLocations.lPos, glm::vec3(0, 100, 0));
+        _bumpShaderProgram->setProgramUniform( _bumpShaderUniformLocations.lPos, glm::vec3(0, 10, 0));
         _bumpShaderProgram->setProgramUniform( _bumpShaderUniformLocations.vPos, _freeCam->getPosition());
         //_bumpShaderProgram->setProgramUniform( _bumpShaderUniformLocations.texMap, _tex);
         //_bumpShaderProgram->setProgramUniform( _bumpShaderUniformLocations.norMap, _nor);
@@ -754,35 +758,39 @@ GLuint Engine::_loadAndRegisterFlatTexture(const char* FILENAME) {
 
 void Engine::_drawRecBumped(float h, float w, float d){
 
-    glm::vec3 flb(-w/2,  d/2, -h/2);
-    glm::vec3 flt(-w/2,  d/2,  h/2);
-    glm::vec3 frb( w/2,  d/2, -h/2);
-    glm::vec3 frt( w/2,  d/2,  h/2);
-    glm::vec3 blb(-w/2, -d/2, -h/2);
-    glm::vec3 blt(-w/2, -d/2,  h/2);
-    glm::vec3 brb( w/2, -d/2, -h/2);
-    glm::vec3 brt( w/2, -d/2, -h/2);
+    //std::cout << "h: " << h << " w: " << w << " d: " << d << std::endl;
+
+    // [front/back][left/right][top/bottom]
+    // ex: Front, left, bottom = flb
+    glm::vec3 flb(-w/2, -h/2,  d/2);
+    glm::vec3 flt(-w/2,  h/2,  d/2);
+    glm::vec3 frb( w/2, -h/2,  d/2);
+    glm::vec3 frt( w/2,  h/2,  d/2);
+    glm::vec3 brb( w/2, -h/2, -d/2);
+    glm::vec3 brt( w/2,  h/2, -d/2);
+    glm::vec3 blb(-w/2, -h/2, -d/2);
+    glm::vec3 blt(-w/2,  h/2, -d/2);
     
-    glm::vec2 tcf0(0.0f, 0.0f);
-    //glm::vec2 tcf1(0.0f, w);
-    glm::vec2 tcf1(0.0f, 1.0f);
-    //glm::vec2 tcf2(h, 0.0f);
-    glm::vec2 tcf2(1.0f, 0.0f);
-    //glm::vec2 tcf3(h, w);
-    glm::vec2 tcf3(1.0f, 1.0f);
+    //Texture coodrinates for each face (back = front, left = right, bottom = top
+    glm::vec2 tcf0(0.0f, h);
+    glm::vec2 tcf1(0.0f, 0.0f);
+    glm::vec2 tcf2(w, h);
+    glm::vec2 tcf3(w, 0.0f);
 
-    glm::vec2 tcr0(0.0f, 0.0f);
-    glm::vec2 tcr1(0.0f, d);
-    glm::vec2 tcr2(h, 0.0f);
-    glm::vec2 tcr3(h, d);
+    glm::vec2 tcr0(0.0f, h);
+    glm::vec2 tcr1(0.0f, 0.0f);
+    glm::vec2 tcr2(d, h);
+    glm::vec2 tcr3(d, 0.0f);
 
-    glm::vec2 tct0(0.0f, 0.0f);
-    glm::vec2 tct1(0.0f, w);
-    glm::vec2 tct2(d, 0.0f);
-    glm::vec2 tct3(d, w);
+    glm::vec2 tct0(0.0f, d);
+    glm::vec2 tct1(0.0f, 0.0f);
+    glm::vec2 tct2(w, d);
+    glm::vec2 tct3(w, 0.0f);
 
+    //A local normal vector
     glm::vec3 nm(0.0f, 0.0f, 1.0f);
 
+    //Tangents for 2 face triangle
     glm::vec3 ftan1, ftan2, btan1, btan2, ltan1, ltan2, rtan1, rtan2, ttan1, ttan2, bbtan1, bbtan2; 
 
     //Front Face
@@ -911,6 +919,7 @@ void Engine::_drawRecBumped(float h, float w, float d){
     bbtan2.y = f * (duv2.y * e1.y - duv1.y * e2.y);
     bbtan2.z = f * (duv2.y * e1.z - duv1.y * e2.z);
     
+    //Defining each face's buffer to send to GPU
     float fVerts[] = {
         flt.x, flt.y, flt.z, nm.x, nm.y, nm.z, tcf0.x, tcf0.y, ftan1.x, ftan1.y, ftan1.z,
         flb.x, flb.y, flb.z, nm.x, nm.y, nm.z, tcf1.x, tcf1.y, ftan1.x, ftan1.y, ftan1.z,
@@ -921,27 +930,93 @@ void Engine::_drawRecBumped(float h, float w, float d){
         frt.x, frt.y, frt.z, nm.x, nm.y, nm.z, tcf2.x, tcf2.y, ftan2.x, ftan2.y, ftan2.z
     };
 
-    GLuint vaod;
-    glGenVertexArrays( 1, &vaod );
-    glBindVertexArray( vaod );
+    float rVerts[] = {
+        frt.x, frt.y, frt.z, nm.x, nm.y, nm.z, tcr0.x, tcr0.y, rtan1.x, rtan1.y, rtan1.z,
+        frb.x, frb.y, frb.z, nm.x, nm.y, nm.z, tcr1.x, tcr1.y, rtan1.x, rtan1.y, rtan1.z,
+        brb.x, brb.y, brb.z, nm.x, nm.y, nm.z, tcr3.x, tcr3.y, rtan1.x, rtan1.y, rtan1.z,
 
-    GLuint vbod;
-    glGenBuffers( 1, &vbod );
+        frt.x, frt.y, frt.z, nm.x, nm.y, nm.z, tcr0.x, tcr0.y, rtan2.x, rtan2.y, rtan2.z,
+        brb.x, brb.y, brb.z, nm.x, nm.y, nm.z, tcr3.x, tcr3.y, rtan2.x, rtan2.y, rtan2.z,
+        brt.x, brt.y, brt.z, nm.x, nm.y, nm.z, tcr2.x, tcr2.y, rtan2.x, rtan2.y, rtan2.z
+    };
 
-    glBindBuffer( GL_ARRAY_BUFFER, vbod );
-    glBufferData( GL_ARRAY_BUFFER, sizeof(fVerts), &fVerts, GL_STATIC_DRAW );
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*) 0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*) (3 * sizeof(float)));
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*) (6 * sizeof(float)));
-    glEnableVertexAttribArray(3);
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*) (8 * sizeof(float)));
+    float bVerts[] = {
+        brt.x, brt.y, brt.z, nm.x, nm.y, nm.z, tcf0.x, tcf0.y, btan1.x, btan1.y, btan1.z,
+        brb.x, brb.y, brb.z, nm.x, nm.y, nm.z, tcf1.x, tcf1.y, btan1.x, btan1.y, btan1.z,
+        blb.x, blb.y, blb.z, nm.x, nm.y, nm.z, tcf3.x, tcf3.y, btan1.x, btan1.y, btan1.z,
 
-    //glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vbods[1] );
-    //glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW) ;
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+        brt.x, brt.y, brt.z, nm.x, nm.y, nm.z, tcf0.x, tcf0.y, btan2.x, btan2.y, btan2.z,
+        blb.x, blb.y, blb.z, nm.x, nm.y, nm.z, tcf3.x, tcf3.y, btan2.x, btan2.y, btan2.z,
+        blt.x, blt.y, blt.z, nm.x, nm.y, nm.z, tcf2.x, tcf2.y, btan2.x, btan2.y, btan2.z
+    };
+
+    float lVerts[] = {
+        blt.x, blt.y, blt.z, nm.x, nm.y, nm.z, tcr0.x, tcr0.y, ltan1.x, ltan1.y, ltan1.z,
+        blb.x, blb.y, blb.z, nm.x, nm.y, nm.z, tcr1.x, tcr1.y, ltan1.x, ltan1.y, ltan1.z,
+        flb.x, flb.y, flb.z, nm.x, nm.y, nm.z, tcr3.x, tcr3.y, ltan1.x, ltan1.y, ltan1.z,
+
+        blt.x, blt.y, blt.z, nm.x, nm.y, nm.z, tcr0.x, tcr0.y, ltan2.x, ltan2.y, ltan2.z,
+        flb.x, flb.y, flb.z, nm.x, nm.y, nm.z, tcr3.x, tcr3.y, ltan2.x, ltan2.y, ltan2.z,
+        flt.x, flt.y, flt.z, nm.x, nm.y, nm.z, tcr2.x, tcr2.y, ltan2.x, ltan2.y, ltan2.z
+    };
+
+    float tVerts[] = {
+        blt.x, blt.y, blt.z, nm.x, nm.y, nm.z, tct0.x, tct0.y, ttan1.x, ttan1.y, ttan1.z,
+        flt.x, flt.y, flt.z, nm.x, nm.y, nm.z, tct1.x, tct1.y, ttan1.x, ttan1.y, ttan1.z,
+        frt.x, frt.y, frt.z, nm.x, nm.y, nm.z, tct3.x, tct3.y, ttan1.x, ttan1.y, ttan1.z,
+
+        blt.x, blt.y, blt.z, nm.x, nm.y, nm.z, tct0.x, tct0.y, ttan2.x, ttan2.y, ttan2.z,
+        frt.x, frt.y, frt.z, nm.x, nm.y, nm.z, tct3.x, tct3.y, ttan2.x, ttan2.y, ttan2.z,
+        brt.x, brt.y, brt.z, nm.x, nm.y, nm.z, tct2.x, tct2.y, ttan2.x, ttan2.y, ttan2.z
+    };
+
+    float bbVerts[] = {
+        flb.x, flb.y, flb.z, nm.x, nm.y, nm.z, tct0.x, tct0.y, bbtan1.x, bbtan1.y, bbtan1.z,
+        blb.x, blb.y, blb.z, nm.x, nm.y, nm.z, tct1.x, tct1.y, bbtan1.x, bbtan1.y, bbtan1.z,
+        brb.x, brb.y, brb.z, nm.x, nm.y, nm.z, tct3.x, tct3.y, bbtan1.x, bbtan1.y, bbtan1.z,
+
+        flb.x, flb.y, flb.z, nm.x, nm.y, nm.z, tct0.x, tct0.y, bbtan2.x, bbtan2.y, bbtan2.z,
+        brb.x, brb.y, brb.z, nm.x, nm.y, nm.z, tct3.x, tct3.y, bbtan2.x, bbtan2.y, bbtan2.z,
+        frb.x, frb.y, frb.z, nm.x, nm.y, nm.z, tct2.x, tct2.y, bbtan2.x, bbtan2.y, bbtan2.z
+    };
+
+    glBindVertexArray( _faceVAO );
+    glBindBuffer( GL_ARRAY_BUFFER, _faceVBO );
+
+    float * verts;
+    for(int i = 0; i < 6; i++){
+        switch(i){
+            case 0:
+                glBufferData( GL_ARRAY_BUFFER, sizeof(fVerts), &fVerts, GL_STATIC_DRAW );
+                break;
+            case 1:
+                glBufferData( GL_ARRAY_BUFFER, sizeof(rVerts), &rVerts, GL_STATIC_DRAW );
+                break;
+            case 2:
+                glBufferData( GL_ARRAY_BUFFER, sizeof(bVerts), &bVerts, GL_STATIC_DRAW );
+                break;
+            case 3:
+                glBufferData( GL_ARRAY_BUFFER, sizeof(lVerts), &lVerts, GL_STATIC_DRAW );
+                break;
+            case 4:
+                glBufferData( GL_ARRAY_BUFFER, sizeof(tVerts), &tVerts, GL_STATIC_DRAW );
+                break;
+            case 5:
+                glBufferData( GL_ARRAY_BUFFER, sizeof(bbVerts), &bbVerts, GL_STATIC_DRAW );
+                break;
+        }
+
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*) 0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*) (3 * sizeof(float)));
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*) (6 * sizeof(float)));
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*) (8 * sizeof(float)));
+
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+    }
 
 }
 //*************************************************************************************

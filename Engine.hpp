@@ -236,6 +236,9 @@ private:
     void _computeAndSendMatrixUniforms(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx) const;
 
     void _drawRecBumped(float h, float w, float d);
+
+    GLuint _faceVAO;
+    GLuint _faceVBO;
 };
 /// \desc functions for user interactions
 void keyboard_callback(GLFWwindow *window, int key, int scancode, int action, int mods );
