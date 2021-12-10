@@ -299,7 +299,9 @@ void Engine::_generateEnvironment() {
                 glm::vec3 color( getRand(), getRand(), getRand() );
                 // store building properties
                 BuildingData currentBuilding = {modelMatrix, color};
-                _buildings.emplace_back( currentBuilding );
+                //_buildings.emplace_back( currentBuilding );
+                BumpData cBump = {1, 1, height, modelMatrix};
+                _bumps.emplace_back(cBump);
             }
 	    else if( !(i % 10) && !(j % 10) && getRand() < 0.4f ) {
                 // translate to spot
@@ -425,6 +427,33 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
 	CSCI441::setVertexAttributeLocations(_textureShaderAttributeLocations.vPos);
 	
 	CSCI441::drawSolidCubeTextured(WORLD_SIZE*3);
+
+    //Draw Bump Map Things
+    _bumpShaderProgram->useProgram();
+
+
+    for(auto &b : _bumps){
+        mvpMtx = projMtx * viewMtx * b.modelMatrix;
+
+        _bumpShaderProgram->setProgramUniform( _bumpShaderUniformLocations.lPos, glm::vec3(0, 100, 0));
+        _bumpShaderProgram->setProgramUniform( _bumpShaderUniformLocations.vPos, _freeCam->getPosition());
+        //_bumpShaderProgram->setProgramUniform( _bumpShaderUniformLocations.texMap, _tex);
+        //_bumpShaderProgram->setProgramUniform( _bumpShaderUniformLocations.norMap, _nor);
+        _bumpShaderProgram->setProgramUniform( _bumpShaderUniformLocations.mvpMatrix, mvpMtx);
+        _bumpShaderProgram->setProgramUniform( _bumpShaderUniformLocations.model, b.modelMatrix);
+
+
+        glUniform1i(_bumpShaderUniformLocations.texMap, 2);
+        glUniform1i(_bumpShaderUniformLocations.norMap, 4);
+        glActiveTexture(GL_TEXTURE0 + 2);
+        glBindTexture(GL_TEXTURE_2D, _tex);
+        glActiveTexture(GL_TEXTURE0 + 4);
+        glBindTexture(GL_TEXTURE_2D, _nor);
+    
+        _drawRecBumped(b.h, b.w, b.d);
+
+    }
+
     // use our lighting shader program
     _lightingShaderProgram->useProgram();
     CSCI441::setVertexAttributeLocations( _lightingShaderAttributeLocations.vPos,
@@ -643,6 +672,11 @@ void Engine::_setupTextures(){
 			
 		
 		_skybox.handle = _loadAndRegisterTexture("");
+
+        _tex = _loadAndRegisterFlatTexture("texture/StoneWall.jpg");
+        _nor = _loadAndRegisterFlatTexture("texture/StoneWallNormal.jpg");
+
+        std::cout << "_tex: " << _tex << "_nor: " << _nor << std::endl;
 }
 GLuint Engine::_loadAndRegisterTexture(const char* FILENAME) {
     // our handle to the GPU
@@ -716,6 +750,199 @@ GLuint Engine::_loadAndRegisterFlatTexture(const char* FILENAME) {
     }
 
     return texHandle;
+}
+
+void Engine::_drawRecBumped(float h, float w, float d){
+
+    glm::vec3 flb(-w/2,  d/2, -h/2);
+    glm::vec3 flt(-w/2,  d/2,  h/2);
+    glm::vec3 frb( w/2,  d/2, -h/2);
+    glm::vec3 frt( w/2,  d/2,  h/2);
+    glm::vec3 blb(-w/2, -d/2, -h/2);
+    glm::vec3 blt(-w/2, -d/2,  h/2);
+    glm::vec3 brb( w/2, -d/2, -h/2);
+    glm::vec3 brt( w/2, -d/2, -h/2);
+    
+    glm::vec2 tcf0(0.0f, 0.0f);
+    //glm::vec2 tcf1(0.0f, w);
+    glm::vec2 tcf1(0.0f, 1.0f);
+    //glm::vec2 tcf2(h, 0.0f);
+    glm::vec2 tcf2(1.0f, 0.0f);
+    //glm::vec2 tcf3(h, w);
+    glm::vec2 tcf3(1.0f, 1.0f);
+
+    glm::vec2 tcr0(0.0f, 0.0f);
+    glm::vec2 tcr1(0.0f, d);
+    glm::vec2 tcr2(h, 0.0f);
+    glm::vec2 tcr3(h, d);
+
+    glm::vec2 tct0(0.0f, 0.0f);
+    glm::vec2 tct1(0.0f, w);
+    glm::vec2 tct2(d, 0.0f);
+    glm::vec2 tct3(d, w);
+
+    glm::vec3 nm(0.0f, 0.0f, 1.0f);
+
+    glm::vec3 ftan1, ftan2, btan1, btan2, ltan1, ltan2, rtan1, rtan2, ttan1, ttan2, bbtan1, bbtan2; 
+
+    //Front Face
+    glm::vec3 e1 = flt - flb;
+    glm::vec3 e2 = frb - flb;
+    glm::vec2 duv1 = tcf0 - tcf1; 
+    glm::vec2 duv2 = tcf2 - tcf1;
+
+    float f = 1.0f / (duv1.x * duv2.y - duv2.x * duv1.y);
+    ftan1.x = f * (duv2.y * e1.x - duv1.y * e2.x);
+    ftan1.y = f * (duv2.y * e1.y - duv1.y * e2.y);
+    ftan1.z = f * (duv2.y * e1.z - duv1.y * e2.z);
+
+    e1 = frb - frt;
+    e2 = flt - frt;
+    duv1 = tcf0 - tcf1; 
+    duv2 = tcf2 - tcf1;
+
+    f = 1.0f / (duv1.x * duv2.y - duv2.x * duv1.y);
+    ftan2.x = f * (duv2.y * e1.x - duv1.y * e2.x);
+    ftan2.y = f * (duv2.y * e1.y - duv1.y * e2.y);
+    ftan2.z = f * (duv2.y * e1.z - duv1.y * e2.z);
+    
+    //Right Face
+    e1 = frt - frb;
+    e2 = brb - frb;
+    duv1 = tcr0 - tcr1; 
+    duv2 = tcr2 - tcr1;
+
+    f = 1.0f / (duv1.x * duv2.y - duv2.x * duv1.y);
+    rtan1.x = f * (duv2.y * e1.x - duv1.y * e2.x);
+    rtan1.y = f * (duv2.y * e1.y - duv1.y * e2.y);
+    rtan1.z = f * (duv2.y * e1.z - duv1.y * e2.z);
+
+    e1 = brb - brt;
+    e2 = frt - brt;
+    duv1 = tcr0 - tcr1; 
+    duv2 = tcr2 - tcr1;
+
+    f = 1.0f / (duv1.x * duv2.y - duv2.x * duv1.y);
+    rtan2.x = f * (duv2.y * e1.x - duv1.y * e2.x);
+    rtan2.y = f * (duv2.y * e1.y - duv1.y * e2.y);
+    rtan2.z = f * (duv2.y * e1.z - duv1.y * e2.z);
+
+    //Back Face
+    e1 = brt - brb;
+    e2 = blb - brb;
+    duv1 = tcf0 - tcf1; 
+    duv2 = tcf2 - tcf1;
+
+    f = 1.0f / (duv1.x * duv2.y - duv2.x * duv1.y);
+    btan1.x = f * (duv2.y * e1.x - duv1.y * e2.x);
+    btan1.y = f * (duv2.y * e1.y - duv1.y * e2.y);
+    btan1.z = f * (duv2.y * e1.z - duv1.y * e2.z);
+
+    e1 = blb - blt;
+    e2 = brt - blt;
+    duv1 = tcf0 - tcf1; 
+    duv2 = tcf2 - tcf1;
+
+    f = 1.0f / (duv1.x * duv2.y - duv2.x * duv1.y);
+    btan2.x = f * (duv2.y * e1.x - duv1.y * e2.x);
+    btan2.y = f * (duv2.y * e1.y - duv1.y * e2.y);
+    btan2.z = f * (duv2.y * e1.z - duv1.y * e2.z);
+    
+    //Left Face
+    e1 = blt - blb;
+    e2 = flb - blb;
+    duv1 = tcr0 - tcr1; 
+    duv2 = tcr2 - tcr1;
+
+    f = 1.0f / (duv1.x * duv2.y - duv2.x * duv1.y);
+    ltan1.x = f * (duv2.y * e1.x - duv1.y * e2.x);
+    ltan1.y = f * (duv2.y * e1.y - duv1.y * e2.y);
+    ltan1.z = f * (duv2.y * e1.z - duv1.y * e2.z);
+
+    e1 = flb - flt;
+    e2 = blt - flt;
+    duv1 = tcr0 - tcr1; 
+    duv2 = tcr2 - tcr1;
+
+    f = 1.0f / (duv1.x * duv2.y - duv2.x * duv1.y);
+    ltan2.x = f * (duv2.y * e1.x - duv1.y * e2.x);
+    ltan2.y = f * (duv2.y * e1.y - duv1.y * e2.y);
+    ltan2.z = f * (duv2.y * e1.z - duv1.y * e2.z);
+
+    //Top Face
+    e1 = blt - flt;
+    e2 = frt - flt;
+    duv1 = tct0 - tct1;
+    duv2 = tct2 - tct1;
+
+    f = 1.0f / (duv1.x * duv2.y - duv2.x * duv1.y);
+    ttan1.x = f * (duv2.y * e1.x - duv1.y * e2.x);
+    ttan1.y = f * (duv2.y * e1.y - duv1.y * e2.y);
+    ttan1.z = f * (duv2.y * e1.z - duv1.y * e2.z);
+    
+    e1 = frt - brt;
+    e1 = blt - brt;
+    duv1 = tct0 - tct1;
+    duv2 = tct2 - tct1;
+
+    f = 1.0f / (duv1.x * duv2.y - duv2.x * duv1.y);
+    ttan2.x = f * (duv2.y * e1.x - duv1.y * e2.x);
+    ttan2.y = f * (duv2.y * e1.y - duv1.y * e2.y);
+    ttan2.z = f * (duv2.y * e1.z - duv1.y * e2.z);
+
+    //Bottom Face
+    e1 = flb - blb;
+    e2 = brb - blb;
+    duv1 = tct0 - tct1;
+    duv2 = tct2 - tct1;
+
+    f = 1.0f / (duv1.x * duv2.y - duv2.x * duv1.y);
+    bbtan1.x = f * (duv2.y * e1.x - duv1.y * e2.x);
+    bbtan1.y = f * (duv2.y * e1.y - duv1.y * e2.y);
+    bbtan1.z = f * (duv2.y * e1.z - duv1.y * e2.z);
+    
+    e1 = brb - frb;
+    e1 = flb - frb;
+    duv1 = tct0 - tct1;
+    duv2 = tct2 - tct1;
+
+    f = 1.0f / (duv1.x * duv2.y - duv2.x * duv1.y);
+    bbtan2.x = f * (duv2.y * e1.x - duv1.y * e2.x);
+    bbtan2.y = f * (duv2.y * e1.y - duv1.y * e2.y);
+    bbtan2.z = f * (duv2.y * e1.z - duv1.y * e2.z);
+    
+    float fVerts[] = {
+        flt.x, flt.y, flt.z, nm.x, nm.y, nm.z, tcf0.x, tcf0.y, ftan1.x, ftan1.y, ftan1.z,
+        flb.x, flb.y, flb.z, nm.x, nm.y, nm.z, tcf1.x, tcf1.y, ftan1.x, ftan1.y, ftan1.z,
+        frb.x, frb.y, frb.z, nm.x, nm.y, nm.z, tcf3.x, tcf3.y, ftan1.x, ftan1.y, ftan1.z,
+
+        flt.x, flt.y, flt.z, nm.x, nm.y, nm.z, tcf0.x, tcf0.y, ftan2.x, ftan2.y, ftan2.z,
+        frb.x, frb.y, frb.z, nm.x, nm.y, nm.z, tcf3.x, tcf3.y, ftan2.x, ftan2.y, ftan2.z,
+        frt.x, frt.y, frt.z, nm.x, nm.y, nm.z, tcf2.x, tcf2.y, ftan2.x, ftan2.y, ftan2.z
+    };
+
+    GLuint vaod;
+    glGenVertexArrays( 1, &vaod );
+    glBindVertexArray( vaod );
+
+    GLuint vbod;
+    glGenBuffers( 1, &vbod );
+
+    glBindBuffer( GL_ARRAY_BUFFER, vbod );
+    glBufferData( GL_ARRAY_BUFFER, sizeof(fVerts), &fVerts, GL_STATIC_DRAW );
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*) 0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*) (3 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*) (6 * sizeof(float)));
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*) (8 * sizeof(float)));
+
+    //glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vbods[1] );
+    //glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW) ;
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
 }
 //*************************************************************************************
 //

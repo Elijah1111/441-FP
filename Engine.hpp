@@ -117,6 +117,14 @@ private:
     /// \desc information list of all the buildings to draw
     std::vector<BuildingData> _buildings;
     
+    struct BumpData {
+        float w,d,h;
+
+        glm::mat4 modelMatrix;
+    };
+
+    std::vector<BumpData> _bumps;
+
     struct TreeData {
         /// \desc transformations to position and size the building
         glm::mat4 topModMatrix;
@@ -179,7 +187,9 @@ private:
         GLint texMap;
         GLint norMap;
     } _bumpShaderUniformLocations;
-
+    
+    GLuint _tex;
+    GLuint _nor;
 
     struct pointLight{
 	/// \desc position of the point light
@@ -224,6 +234,8 @@ private:
     /// \param viewMtx camera view matrix
     /// \param projMtx camera projection matrix
     void _computeAndSendMatrixUniforms(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx) const;
+
+    void _drawRecBumped(float h, float w, float d);
 };
 /// \desc functions for user interactions
 void keyboard_callback(GLFWwindow *window, int key, int scancode, int action, int mods );

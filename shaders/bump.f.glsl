@@ -23,7 +23,7 @@ void main() {
 
     vec3 color = texture(texMap, texCoord).rgb;
 
-    vec3 ambient = 0.1 * color;
+    vec3 ambient = 0.3 * color;
 
     vec3 lDir = normalize(tLPos - tFPos);
     float diff = max(dot(lDir, normal), 0.0);
@@ -31,8 +31,9 @@ void main() {
 
     vec3 vDir = normalize(tVPos - tFPos);
     vec3 hDir = normalize(lDir + vDir);
-    float spec = pow(max(dot(normal, hDir), 0.0), 32.0);
+    float spec = max(dot(normal, hDir), 0.0);
 
     vec3 specular = vec3(0.2) * spec;
     fragColor = vec4(ambient + diffuse + specular, 1.0);
+    //fragColor = vec4(ambient, 1.0);
 }
