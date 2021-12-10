@@ -7,6 +7,7 @@ Final Project for CSCI 441
 
 # Controls
 1 - Pause Obstacles
+2 - Spawn Background Wave
 9 - Spawn Obstacle
 0 - Toggle Free Cam
 
