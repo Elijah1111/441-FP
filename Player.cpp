@@ -50,7 +50,7 @@ void Player::drawMe( glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx ) 
     frame();//increase frame counter
 	glUseProgram( _shaderProgramHandle );
 	t++;
-    modelMtx = glm::translate( modelMtx, glm::vec3 (0,0.05*(sin(M_PI/128*_frameI)+1),0) );
+    modelMtx = glm::rotate(glm::translate(modelMtx, glm::vec3 (0,0.05*(sin(M_PI/128*_frameI)+1),0)), static_cast<float>(M_PI), CSCI441::Y_AXIS);
     
     _computeAndSendMatrixUniforms(modelMtx, viewMtx, projMtx);
     CustomObjects::drawHorse(t);

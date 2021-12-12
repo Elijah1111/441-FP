@@ -305,7 +305,7 @@ void Engine::spawnBackground(){//spawn new background elements to fly by
 					 // compute random color
 					 glm::vec3 color( getRand(), getRand(), getRand() );
 					 // store building properties
-					 BuildingData currentBuilding = {modelMatrix, color,j};
+					 BuildingData currentBuilding = {modelMatrix, color, static_cast<double>(j)};
 					 _buildings.emplace_back( currentBuilding );
 				}
 				  
@@ -336,7 +336,7 @@ void Engine::spawnBackground(){//spawn new background elements to fly by
 		  glm::mat4 topModMatrix = transToHeight * scaleToHeightMtx * transToSpotMtx;
 
 		  // store building properties
-		  TreeData tmp = {topModMatrix, trunkModMatrix,j};
+		  TreeData tmp = {topModMatrix, trunkModMatrix,static_cast<double>(j)};
 		  _trees.emplace_back(tmp);}}}
 
 }
@@ -382,7 +382,7 @@ void Engine::_generateEnvironment() {
                 // compute random color
                 glm::vec3 color( getRand(), getRand(), getRand() );
                 // store building properties
-                BuildingData currentBuilding = {modelMatrix, color,j};
+                BuildingData currentBuilding = {modelMatrix, color,static_cast<double>(j)};
                 _buildings.emplace_back( currentBuilding );
             }
 	    else if( !(i % 10) && !(j % 10) && getRand() < 0.4f ) {
@@ -408,7 +408,7 @@ void Engine::_generateEnvironment() {
                 glm::mat4 topModMatrix = transToHeight * scaleToHeightMtx * transToSpotMtx;
 
                 // store building properties
-                TreeData tmp = {topModMatrix, trunkModMatrix,j};
+                TreeData tmp = {topModMatrix, trunkModMatrix,static_cast<double>(j)};
                 _trees.emplace_back(tmp);
             }
         }
@@ -497,9 +497,9 @@ void Engine::_cleanupBuffers() {
 // Rendering / Drawing Functions - this is where the magic happens!
 
 void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
-	//BEGIN DRAW SKYBOX
+	////BEGIN DRAW SKYBOX ////
 	_textureShaderProgram->useProgram();
-	glm::mat4 tmpModel = glm::translate(glm::mat4(1.0f),glm::vec3(0,WORLD_SIZE,0));
+	glm::mat4 tmpModel = glm::rotate(glm::translate(glm::mat4(1.0f),glm::vec3(0,0,0)), currentFrame/3000.0f, glm::vec3(0.0f,1.0f,1.0f) );
 	glm::mat4 mvpMtx = projMtx * viewMtx * tmpModel;
 	_textureShaderProgram->setProgramUniform(
 					_textureShaderUniformLocations.mvpMatrix, mvpMtx);
@@ -507,7 +507,7 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
 	
 	CSCI441::setVertexAttributeLocations(_textureShaderAttributeLocations.vPos);
 	
-	CSCI441::drawSolidCubeTextured(WORLD_SIZE*3);
+	CSCI441::drawSolidCubeTextured(WORLD_SIZE*10);
     // use our lighting shader program
     _lightingShaderProgram->useProgram();
     CSCI441::setVertexAttributeLocations( _lightingShaderAttributeLocations.vPos,
@@ -622,7 +622,7 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
     glm::mat4 modelMtx0 = glm::translate( modelMtx, _player->pos );
     
     // draw our craft now
-    _player->drawMe( modelMtx0, viewMtx, projMtx );
+    //_player->drawMe( modelMtx0, viewMtx, projMtx );
     
     //// END DRAWING MODELS ////
    	
@@ -778,7 +778,7 @@ GLuint Engine::_loadAndRegisterTexture(const char* FILENAME) {
     GLint imageWidth, imageHeight, imageChannels;
     // load image from file
 	for(unsigned int i=0; i< 6; i++){
-			char fname[] = "./texture/skybox%d.jpg";
+			char fname[] = "./texture/skybox%d.png";
 			sprintf(fname,fname,i);
 			//fprintf(stdout,fname);	
 			
