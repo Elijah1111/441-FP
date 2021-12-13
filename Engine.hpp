@@ -43,7 +43,8 @@ public:
     /// \desc what hero we have selected
     int selectedHero = 0;
 private:
-    /// \desc set up functions
+
+	/// \desc set up functions
     void _setupGLFW() final;
     void _setupOpenGL() final;
     void _setupShaders() final;
@@ -109,10 +110,12 @@ private:
     
     /// \desc smart container to store information specific to each building we wish to draw
     struct BuildingData {
+        float w,d,h;
         /// \desc transformations to position and size the building
         glm::mat4 modelMatrix;
         /// \desc color to draw the building
         glm::vec3 color;
+		double pos;//position along the x axis
     };
     /// \desc information list of all the buildings to draw
     std::vector<BuildingData> _buildings;
@@ -129,21 +132,31 @@ private:
         /// \desc transformations to position and size the building
         glm::mat4 topModMatrix;
         glm::mat4 trunkModMatrix;
-	glm::vec3 green = glm::vec3(0.0,0.8,0.0);
-	glm::vec3 brown = glm::vec3(0.325,0.192,0.094);
+		double pos;//position in the x axis
+		glm::vec3 green = glm::vec3(0.0,0.8,0.0);
+		glm::vec3 brown = glm::vec3(0.325,0.192,0.094);
     };
     std::vector<TreeData> _trees;
 	
 
 	std::vector<Obstacle> _obs;//obstacles
-
+	int obstacleSlots = 10;//how many obstacles can be sapwned at a time
+	unsigned int lastSpawnedFrame = 0;
+	unsigned int currentFrame = 180;//current game time
+	//does not start at zero to fix issue with spawining obstacles the first time
+	
+    bool pause;//pasue the obstacles
+	void _createObstacle();//creates an obstacle
+	void spawnControl(bool);//controls spawning obstacles
+	
+	void frame();//track frame updates
 
     /// \desc generates building information to make up our scene
     void _generateEnvironment();
-	
-	
-	void _createObstacle();//creates an obstacle
-
+	void spawnBackground();//spawn more background elements	
+	bool _stepBackground(glm::mat4*, glm::mat4*, double*, bool);
+	float _backgroundSpeed = 0.25;//speed of the background	
+	unsigned int lastBackgroundFrame = 0;
 
     /// \desc shader program that performs lighting
     CSCI441::ShaderProgram* _lightingShaderProgram = nullptr;   // the wrapper for our shader program
