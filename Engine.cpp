@@ -671,8 +671,8 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
     
     glm::mat4 modelMtx0 = glm::translate( modelMtx, _player->pos );
     
-    // draw our craft now
-    //_player->drawMe( modelMtx0, viewMtx, projMtx );
+    // DRAW PLAYER
+    _player->drawMe( modelMtx0, viewMtx, projMtx );
     
     //// END DRAWING MODELS ////
    	
