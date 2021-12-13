@@ -185,12 +185,12 @@ void Engine::_setupBuffers() {
 }
 
 void Engine::_createObstacle(){
-  		double p = 25;
+  		double p = 25;//spawn point
 		// translate to spot
 		glm::mat4 transToSpotMtx = glm::translate( glm::mat4(1.0), glm::vec3(5.0f, 0.0f, -p) );
 
 		// compute random height
-		GLdouble height = powf(getRand(), 2.5)*5 + 1;
+		GLdouble height = powf(getRand(), 2.5)*4 + 1;//TODO tweak height to be more fair
 		// scale to size
 		glm::mat4 scaleToHeightMtx = glm::scale( glm::mat4(1.0), glm::vec3(1, height, 1) );
 
@@ -205,6 +205,23 @@ void Engine::_createObstacle(){
 		// store building properties
 		Obstacle ob(glm::vec3(0,0,p), modelMatrix, color, getRand()*0.20f + 0.05, height);
 		_obs.emplace_back( ob );
+}
+
+
+void Engine::spawnControl(bool pause){
+	if(pause)
+			  return;//do not spawn when paused
+	if(currentFrame - lastSpawnedFrame >= 100){//TODO adjust frame timing
+			if(obstacleSlots > 0){
+				GLdouble chance = getRand();
+				if(chance > 0.4){//60% chance to spawn a obstacle
+					_createObstacle();
+					obstacleSlots--;
+					lastSpawnedFrame = currentFrame;	
+				}
+
+			}
+	}
 }
 
 void Engine::_createGroundBuffers() {
@@ -242,6 +259,89 @@ void Engine::_createGroundBuffers() {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 }
 
+
+bool Engine::_stepBackground(glm::mat4* model,glm::mat4* tree, double* pos, bool type){
+
+   (*pos) += _backgroundSpeed;
+	
+	(*model) = glm::translate(*model, glm::vec3(0,0,_backgroundSpeed));
+   if (type)//move the trees other model aswell
+		(*tree) = glm::translate(*tree, glm::vec3(0,0,_backgroundSpeed));
+
+	if((*pos) >= 60){//delete when it gets out of bounds
+			  return true;
+	}
+   return false;
+}
+
+
+
+void Engine::spawnBackground(){//spawn new background elements to fly by
+	if(currentFrame - lastBackgroundFrame <= WORLD_SIZE/_backgroundSpeed + 10)
+			  return;//TODO adjust timing
+	lastBackgroundFrame = currentFrame;
+	
+	for(int i = -5; i > -WORLD_SIZE; i--) {
+   	for(int j = -60; j > -WORLD_SIZE-60; j--) {
+			  if( !(i % 5) && !(j % 5) && getRand() < 0.3f ) {
+					 // translate to spot
+					 glm::mat4 transToSpotMtx = glm::translate(
+										  glm::mat4(1.0), glm::vec3(i, 0.0f, j) );
+
+					 // compute random height
+					 GLdouble height = powf(getRand(), 2.5)*10 + 1;
+					 // scale to building size
+					 glm::mat4 scaleToHeightMtx = glm::scale(
+										  glm::mat4(1.0), glm::vec3(1, height, 1) );
+
+					 // translate up to grid
+					 glm::mat4 transToHeight = glm::translate(
+										  glm::mat4(1.0), glm::vec3(0, height/2.0f, 0) );
+
+					 // compute full model matrix
+					 glm::mat4 modelMatrix = transToHeight 
+								* scaleToHeightMtx * transToSpotMtx;
+
+					 // compute random color
+					 glm::vec3 color( getRand(), getRand(), getRand() );
+					 // store building properties
+					 BuildingData currentBuilding = {modelMatrix, color, static_cast<double>(j)};
+					 _buildings.emplace_back( currentBuilding );
+				}
+				  
+				  //Spawn Trees
+			else if( !(i % 10) && !(j % 5) && getRand() < 0.4f) {
+			glm::mat4 transToSpotMtx = glm::translate(
+								 glm::mat4(1.0), glm::vec3(i, 0.0f, j) );
+
+		  // compute random height
+		  GLdouble trunkH = powf(getRand(), 2.5)*2 + 1;
+		  GLdouble topH = powf(getRand(), 2.5)*3 + 1;
+		  // scale to building size
+		  glm::mat4 scaleToHeightMtx = glm::scale(
+							  	glm::mat4(1.0), glm::vec3(1, trunkH, 1) );
+
+		  // compute full model matrix
+		  glm::mat4 trunkModMatrix = scaleToHeightMtx * transToSpotMtx;
+		  
+		// scale to trunk+top
+		  scaleToHeightMtx = glm::scale(
+							  	glm::mat4(1.0), glm::vec3(1, trunkH+topH, 1) );
+
+		  // translate up to grid
+		glm::mat4 transToHeight = glm::translate(
+							 glm::mat4(1.0), glm::vec3(0, (trunkH), 0) );
+
+		  // compute full model matrix
+		  glm::mat4 topModMatrix = transToHeight * scaleToHeightMtx * transToSpotMtx;
+
+		  // store building properties
+		  TreeData tmp = {topModMatrix, trunkModMatrix,static_cast<double>(j)};
+		  _trees.emplace_back(tmp);}}}
+
+}
+
+
 void Engine::_generateEnvironment() {
     //******************************************************************
     // parameters to make up our grid size and spacing, feel free to
@@ -262,9 +362,8 @@ void Engine::_generateEnvironment() {
     // psych! everything's on a grid.
     for(int i = LEFT_END_POINT; i < RIGHT_END_POINT; i += GRID_SPACING_WIDTH) {
         for(int j = BOTTOM_END_POINT; j < TOP_END_POINT; j += GRID_SPACING_LENGTH) {
-            // don't just draw a building ANYWHERE.
             if(abs(i)<10 and abs(j) <10)
-		    continue;//dont draw too close on the origin
+		    		continue;//dont draw too close on the origin
 	    if( !(i % 5) && !(j % 5) && getRand() < 0.3f ) {
                 // translate to spot
                 glm::mat4 transToSpotMtx = glm::translate( glm::mat4(1.0), glm::vec3(i, 0.0f, j) );
@@ -283,7 +382,7 @@ void Engine::_generateEnvironment() {
                 // compute random color
                 glm::vec3 color( getRand(), getRand(), getRand() );
                 // store building properties
-                BuildingData currentBuilding = {modelMatrix, color};
+                BuildingData currentBuilding = {modelMatrix, color,static_cast<double>(j)};
                 _buildings.emplace_back( currentBuilding );
             }
 	    else if( !(i % 10) && !(j % 10) && getRand() < 0.4f ) {
@@ -309,7 +408,7 @@ void Engine::_generateEnvironment() {
                 glm::mat4 topModMatrix = transToHeight * scaleToHeightMtx * transToSpotMtx;
 
                 // store building properties
-                TreeData tmp = {topModMatrix, trunkModMatrix};
+                TreeData tmp = {topModMatrix, trunkModMatrix,static_cast<double>(j)};
                 _trees.emplace_back(tmp);
             }
         }
@@ -398,9 +497,9 @@ void Engine::_cleanupBuffers() {
 // Rendering / Drawing Functions - this is where the magic happens!
 
 void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
-	//BEGIN DRAW SKYBOX
+	////BEGIN DRAW SKYBOX ////
 	_textureShaderProgram->useProgram();
-	glm::mat4 tmpModel = glm::translate(glm::mat4(1.0f),glm::vec3(0,WORLD_SIZE,0));
+	glm::mat4 tmpModel = glm::rotate(glm::translate(glm::mat4(1.0f),glm::vec3(0,0,0)), currentFrame/3000.0f, glm::vec3(0.0f,1.0f,1.0f) );
 	glm::mat4 mvpMtx = projMtx * viewMtx * tmpModel;
 	_textureShaderProgram->setProgramUniform(
 					_textureShaderUniformLocations.mvpMatrix, mvpMtx);
@@ -408,7 +507,7 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
 	
 	CSCI441::setVertexAttributeLocations(_textureShaderAttributeLocations.vPos);
 	
-	CSCI441::drawSolidCubeTextured(WORLD_SIZE*3);
+	CSCI441::drawSolidCubeTextured(WORLD_SIZE*10);
     // use our lighting shader program
     _lightingShaderProgram->useProgram();
     CSCI441::setVertexAttributeLocations( _lightingShaderAttributeLocations.vPos,
@@ -449,27 +548,43 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
     //// END DRAWING THE RED CONE////
     
     //// BEGIN DRAWING THE BUILDINGS ////
-    for( const BuildingData& currentBuilding : _buildings ) {
-        _computeAndSendMatrixUniforms(currentBuilding.modelMatrix, viewMtx, projMtx);
+		std::vector<int> removeBuild;
+    for(int i=0; i<_buildings.size(); i++ ) {
+        BuildingData* cBuild = &_buildings[i];
+			_computeAndSendMatrixUniforms(cBuild->modelMatrix, viewMtx, projMtx);
 
-        glUniform3fv(_lightingShaderUniformLocations.materialColor, 1, &currentBuilding.color[0]);
+        glUniform3fv(_lightingShaderUniformLocations.materialColor, 1, &cBuild->color[0]);
 
         CSCI441::drawSolidCube(1.0);
+		if(_stepBackground(&cBuild->modelMatrix, nullptr, &cBuild->pos, false)){
+				  removeBuild.emplace_back(i);
+		}
     }
+	for(int i = removeBuild.size()-1; i>=0; i--){//remove obstacls that have gone out of bounds
+			  _buildings.erase(_buildings.begin() + removeBuild[i]);
+	}
     //// END DRAWING THE BUILDINGS ////
     //// BEGIN DRAWING THE TREES   ////
-    for( const TreeData& cTree : _trees ) {
-        _computeAndSendMatrixUniforms(cTree.trunkModMatrix, viewMtx, projMtx);
-        glUniform3fv(_lightingShaderUniformLocations.materialColor, 1, &cTree.brown[0]);
+	std::vector<int> removeTree;
+    for(int i=0; i<_trees.size(); i++ ) {
+        TreeData* cTree = &_trees[i];
+			_computeAndSendMatrixUniforms(cTree->trunkModMatrix, viewMtx, projMtx);
+        glUniform3fv(_lightingShaderUniformLocations.materialColor, 1, &cTree->brown[0]);
         CSCI441::drawSolidCylinder(0.5,0.5,1.0,10,10);
         
-	_computeAndSendMatrixUniforms(cTree.topModMatrix, viewMtx, projMtx);
-        glUniform3fv(_lightingShaderUniformLocations.materialColor, 1, &cTree.green[0]);
+	_computeAndSendMatrixUniforms(cTree->topModMatrix, viewMtx, projMtx);
+        glUniform3fv(_lightingShaderUniformLocations.materialColor, 1, &cTree->green[0]);
         CSCI441::drawSolidCone(1.0,1.0,10,10);
+		if(_stepBackground(&cTree->trunkModMatrix, &cTree->topModMatrix, &cTree->pos, true)){
+				  removeTree.emplace_back(i);
+		}
     }
+	for(int i = removeTree.size()-1; i>=0; i--){//remove obstacls that have gone out of bounds
+			  _trees.erase(_trees.begin() + i);
+	}
     //// END DRAWING THE TREES ////
 	//// BEGIN DRAWING OBSTACLES ////
-	std::vector<int> remove;
+	std::vector<int> removeObs;
 	for(int i=0; i<_obs.size(); i++) {
         Obstacle currentObs = _obs[i];
 		//print(currentObs.pos);//very spammy
@@ -478,11 +593,16 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
         glUniform3fv(_lightingShaderUniformLocations.materialColor, 1, &currentObs.color[0]);
 
         CSCI441::drawSolidCube(1.0);
-		if(currentObs.step())
-				remove.emplace_back(i);
+		if(currentObs.step(pause)){
+				removeObs.emplace_back(i);
+		}
+		if(currentObs.collide(_player)){
+				fprintf(stdout,"\nCollision\n\n");
+		}
     	_obs[i] = currentObs;
 	}
-	for(int i : remove){//remove obstacls that have gone out of bounds
+	for(int i = removeObs.size()-1; i>=0; i--){//remove obstacls that have gone out of bounds
+			obstacleSlots++;//add a new slot in
 			_obs.erase(_obs.begin() + i);
 	}
 	//// END DRAWING OBSTACLES ////
@@ -502,22 +622,26 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
     glm::mat4 modelMtx0 = glm::translate( modelMtx, _player->pos );
     
     // draw our craft now
-    _player->drawMe( modelMtx0, viewMtx, projMtx );
+    //_player->drawMe( modelMtx0, viewMtx, projMtx );
     
     //// END DRAWING MODELS ////
    	
 }
 
 void Engine::_updateScene() {
+		 spawnControl(pause);
+		 spawnBackground();
 		// player Move 
-		if (_keys[GLFW_KEY_A]) {//move left
-			_player->moveLeft(_camStat.speed.x * 5);
+		if (!pause){//no moving when paused
+				  if (_keys[GLFW_KEY_A]) {//move left
+					  _player->moveLeft(_camStat.speed.x * 5);
+				  }
+				  if (_keys[GLFW_KEY_D]) {//Move Right
+					  _player->moveRight(_camStat.speed.x * 5);
+				  }
+				  if (_keys[GLFW_KEY_W])
+						  _player->jump();
 		}
-		if (_keys[GLFW_KEY_D]) {//Move Right
-			_player->moveRight(_camStat.speed.x * 5);
-		}
-		if (_keys[GLFW_KEY_W])
-				_player->jump();
         // free cam
 		if(_keys[GLFW_KEY_0]){
 			_camStat.free = !_camStat.free;
@@ -564,6 +688,15 @@ void Engine::_updateScene() {
 			_keys[GLFW_KEY_9] = false;//consume that input
     		_createObstacle();	
 		}
+		if(_keys[GLFW_KEY_1]){
+			_keys[GLFW_KEY_1] = false;//consume that input
+			pause = !pause;
+		}
+		if (_keys[GLFW_KEY_2]){
+			_keys[GLFW_KEY_2] = false;//consume that input
+         spawnBackground();
+
+		}
 }
 
 void Engine::run() {
@@ -597,14 +730,21 @@ void Engine::run() {
         _renderScene(viewMatrix, projectionMatrix);
         
 		_updateScene();
-
+		frame();//adjust frame timing
 
 
         glfwSwapBuffers(_window);                       // flush the OpenGL commands and make sure they get rendered!
         glfwPollEvents();				                // check for any events and signal to redraw screen
     }
 }
-
+void Engine::frame(){
+	currentFrame++;
+	currentFrame %= 100000000;//I dont want this overflowing if it comes to it
+	if (!currentFrame){
+		lastSpawnedFrame=0;//prevent issues when we do rewrap around
+		lastBackgroundFrame=0;	
+	}
+}
 //*************************************************************************************
 //
 // Private Helper FUnctions
@@ -638,7 +778,7 @@ GLuint Engine::_loadAndRegisterTexture(const char* FILENAME) {
     GLint imageWidth, imageHeight, imageChannels;
     // load image from file
 	for(unsigned int i=0; i< 6; i++){
-			char fname[] = "./texture/skybox%d.jpg";
+			char fname[] = "./texture/skybox%d.png";
 			sprintf(fname,fname,i);
 			//fprintf(stdout,fname);	
 			
