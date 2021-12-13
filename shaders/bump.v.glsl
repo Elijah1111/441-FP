@@ -5,7 +5,8 @@ uniform mat4 model;
 uniform mat4 mvpMatrix;
 
 //Light pos, view pos
-uniform vec3 lPos;
+uniform vec3 pPos;
+uniform vec3 sPos;
 uniform vec3 vPos;
 
 
@@ -20,9 +21,11 @@ layout(location = 3) in vec3 aTangent;
 out vec3 fragPos;
 out vec2 texCoord;
 //lPos, vPos, fPos in tangent space.
-out vec3 tLPos;
+out vec3 tPPos;
+out vec3 tSPos;
 out vec3 tVPos;
 out vec3 tFPos;
+out vec3 tDPos;
 
 
 void main() {
@@ -39,9 +42,11 @@ void main() {
 
     //Convert lPos, vPos, fPos to tangent space
     mat3 TBN = transpose(mat3(T, B, N));
-    tLPos = TBN * lPos;
+    tPPos = TBN * pPos;
     tVPos = TBN * vPos;
     tFPos = TBN * fragPos;
+    tSPos = TBN * sPos;
+    tDPos = TBN * vec3(-1.0f, 0.0f, 0.0f);
     
     gl_Position = mvpMatrix * vec4(aPos, 1.0);
 }

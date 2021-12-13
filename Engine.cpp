@@ -168,7 +168,8 @@ void Engine::_setupShaders() {
 
     _bumpShaderUniformLocations.mvpMatrix = _bumpShaderProgram->getUniformLocation("mvpMatrix");
     _bumpShaderUniformLocations.model = _bumpShaderProgram->getUniformLocation("model");
-    _bumpShaderUniformLocations.lPos = _bumpShaderProgram->getUniformLocation("lPos");
+    _bumpShaderUniformLocations.pPos = _bumpShaderProgram->getUniformLocation("pPos");
+    _bumpShaderUniformLocations.pCol = _bumpShaderProgram->getUniformLocation("pCol");
     _bumpShaderUniformLocations.vPos = _bumpShaderProgram->getUniformLocation("vPos");
     _bumpShaderUniformLocations.texMap = _bumpShaderProgram->getUniformLocation("texMap");
     _bumpShaderUniformLocations.norMap = _bumpShaderProgram->getUniformLocation("norMap");
@@ -304,7 +305,7 @@ void Engine::_generateEnvironment() {
                 // store building properties
                 BuildingData currentBuilding = {modelMatrix, color};
                 //_buildings.emplace_back( currentBuilding );
-                BumpData cBump = {1, 1, height, modelMatrix};
+                BumpData cBump = {1, 1, (float) height, modelMatrix};
                 _bumps.emplace_back(cBump);
             }
 	    else if( !(i % 10) && !(j % 10) && getRand() < 0.4f ) {
@@ -364,6 +365,13 @@ void Engine::_setupScene() {
                         _pointLight.col,
                         1,&col[0]);
 	
+    glProgramUniform3fv(_bumpShaderProgram->getShaderProgramHandle(),
+                        _bumpShaderUniformLocations.pPos,
+                        1,&pos[0]);
+    glProgramUniform3fv(_bumpShaderProgram->getShaderProgramHandle(),
+                        _bumpShaderUniformLocations.pCol,
+                        1,&col[0]);
+    
 	//SETUP SPOTLIGHT
     glm::vec3 pcol = glm::vec3(1, 0, 0);
     glm::vec3 pdir = glm::vec3(0,-1.0f,0);
@@ -439,7 +447,6 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
     for(auto &b : _bumps){
         mvpMtx = projMtx * viewMtx * b.modelMatrix;
 
-        _bumpShaderProgram->setProgramUniform( _bumpShaderUniformLocations.lPos, glm::vec3(0, 10, 0));
         _bumpShaderProgram->setProgramUniform( _bumpShaderUniformLocations.vPos, _freeCam->getPosition());
         //_bumpShaderProgram->setProgramUniform( _bumpShaderUniformLocations.texMap, _tex);
         //_bumpShaderProgram->setProgramUniform( _bumpShaderUniformLocations.norMap, _nor);

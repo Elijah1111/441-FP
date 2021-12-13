@@ -180,7 +180,8 @@ private:
         GLint mvpMatrix;
         GLint model;
 
-        GLint lPos;
+        GLint pPos;
+        GLint pCol;
 
         GLint vPos;
 
