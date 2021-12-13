@@ -280,7 +280,7 @@ void Engine::spawnBackground(){//spawn new background elements to fly by
 			  return;//TODO adjust timing
 	lastBackgroundFrame = currentFrame;
 	
-	for(int i = -5; i > -WORLD_SIZE; i--) {
+	for(int i = -5; i > -WORLD_SIZE; i--) {//spawn some more trees and things
    	for(int j = -60; j > -WORLD_SIZE-60; j--) {
 			  if( !(i % 5) && !(j % 5) && getRand() < 0.3f ) {
 					 // translate to spot

@@ -132,7 +132,9 @@ private:
 	std::vector<Obstacle> _obs;//obstacles
 	int obstacleSlots = 10;//how many obstacles can be sapwned at a time
 	unsigned int lastSpawnedFrame = 0;
-	unsigned int currentFrame = 0;//current game time
+	unsigned int currentFrame = 180;//current game time
+	//does not start at zero to fix issue with spawining obstacles the first time
+	
     bool pause;//pasue the obstacles
 	void _createObstacle();//creates an obstacle
 	void spawnControl(bool);//controls spawning obstacles
