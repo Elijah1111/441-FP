@@ -173,8 +173,7 @@ void Engine::_setupBuffers() {
                        _lightingShaderUniformLocations.mvpMatrix,
                        _lightingShaderUniformLocations.normMat,
                        _lightingShaderUniformLocations.materialColor,
-                       _lightingShaderUniformLocations.model
-                       );
+                       _lightingShaderUniformLocations.model);
     CustomObjects::setupShaders(
             _lightingShaderProgram->getShaderProgramHandle(),
             _lightingShaderAttributeLocations.vPos,
@@ -548,7 +547,7 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
     //// END DRAWING THE RED CONE////
     
     //// BEGIN DRAWING THE BUILDINGS ////
-		std::vector<int> removeBuild;
+	 std::vector<BuildingData> tmpBuild;
     for(int i=0; i<_buildings.size(); i++ ) {
         BuildingData* cBuild = &_buildings[i];
 			_computeAndSendMatrixUniforms(cBuild->modelMatrix, viewMtx, projMtx);
@@ -556,16 +555,14 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
         glUniform3fv(_lightingShaderUniformLocations.materialColor, 1, &cBuild->color[0]);
 
         CSCI441::drawSolidCube(1.0);
-		if(_stepBackground(&cBuild->modelMatrix, nullptr, &cBuild->pos, false)){
-				  removeBuild.emplace_back(i);
+		if(!_stepBackground(&cBuild->modelMatrix, nullptr, &cBuild->pos, false)){
+				  tmpBuild.emplace_back(*cBuild);
 		}
     }
-	for(int i = removeBuild.size()-1; i>=0; i--){//remove obstacls that have gone out of bounds
-			  _buildings.erase(_buildings.begin() + removeBuild[i]);
-	}
-    //// END DRAWING THE BUILDINGS ////
+    _buildings = tmpBuild;
+	 //// END DRAWING THE BUILDINGS ////
     //// BEGIN DRAWING THE TREES   ////
-	std::vector<int> removeTree;
+	std::vector<TreeData> tmpTree;
     for(int i=0; i<_trees.size(); i++ ) {
         TreeData* cTree = &_trees[i];
 			_computeAndSendMatrixUniforms(cTree->trunkModMatrix, viewMtx, projMtx);
@@ -575,16 +572,14 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
 	_computeAndSendMatrixUniforms(cTree->topModMatrix, viewMtx, projMtx);
         glUniform3fv(_lightingShaderUniformLocations.materialColor, 1, &cTree->green[0]);
         CSCI441::drawSolidCone(1.0,1.0,10,10);
-		if(_stepBackground(&cTree->trunkModMatrix, &cTree->topModMatrix, &cTree->pos, true)){
-				  removeTree.emplace_back(i);
+		if(!_stepBackground(&cTree->trunkModMatrix, &cTree->topModMatrix, &cTree->pos, true)){
+			tmpTree.emplace_back(*cTree);
 		}
     }
-	for(int i = removeTree.size()-1; i>=0; i--){//remove obstacls that have gone out of bounds
-			  _trees.erase(_trees.begin() + i);
-	}
-    //// END DRAWING THE TREES ////
+    _trees = tmpTree;
+	//// END DRAWING THE TREES ////
 	//// BEGIN DRAWING OBSTACLES ////
-	std::vector<int> removeObs;
+	std::vector<Obstacle> tmpObs;
 	for(int i=0; i<_obs.size(); i++) {
         Obstacle currentObs = _obs[i];
 		//print(currentObs.pos);//very spammy
@@ -593,18 +588,17 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
         glUniform3fv(_lightingShaderUniformLocations.materialColor, 1, &currentObs.color[0]);
 
         CSCI441::drawSolidCube(1.0);
-		if(currentObs.step(pause)){
-				removeObs.emplace_back(i);
+		if(!currentObs.step(pause)){
+			tmpObs.push_back(currentObs);
 		}
-		if(currentObs.collide(_player)){
-				fprintf(stdout,"\nCollision\n\n");
+		else//delete this obstacle
+			obstacleSlots++;
+		if(currentObs.collide(_player)){//TODO do something with this
+				//fprintf(stdout,"\nCollision\n\n");
 		}
     	_obs[i] = currentObs;
 	}
-	for(int i = removeObs.size()-1; i>=0; i--){//remove obstacls that have gone out of bounds
-			obstacleSlots++;//add a new slot in
-			_obs.erase(_obs.begin() + i);
-	}
+	_obs = tmpObs;
 	//// END DRAWING OBSTACLES ////
 	
 
