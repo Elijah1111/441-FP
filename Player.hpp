@@ -36,6 +36,10 @@ public:
     void moveLeft(double);  // move left
     void moveRight(double); // move right
 
+    void jump(); // jump
+
+    void frame(); // increase frame number
+
     glm::vec3 pos = glm::vec3(5, 0, 0);          // where the player is in space
     glm::vec4 bBox[4] = {glm::vec4(0, 0, 0, 0)}; // changing Bounding Box
 private:

@@ -12,8 +12,6 @@ Player::Player(GLuint shaderProgramHandle, GLint mvpMtxUniformLocation, GLint no
 	_shaderProgramUniformLocations.mvpMtx = mvpMtxUniformLocation;
 	_shaderProgramUniformLocations.normMtx = normMtxUniformLocation;
 	_shaderProgramUniformLocations.modelMtx = modelMtxUniformLocation;
-
-	_scaleBody = glm::vec3(3.0f, 3.5f, 3.0f); // TODO this does nothing
 }
 
 void Player::moveLeft(double s)
