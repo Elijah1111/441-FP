@@ -163,18 +163,29 @@ private:
 
     /// \desc generates building information to make up our scene
     void _generateEnvironment();
-    void spawnBackground(); // spawn more background elements
+    void _spawnBackground(); // spawn more background elements
     bool _stepBackground(glm::mat4 *, glm::mat4 *, double *, bool);
     float _backgroundSpeed = 0.25; // speed of the background
     unsigned int lastBackgroundFrame = 0;
 
     /// \desc shader program that performs lighting
-    CSCI441::ShaderProgram *_blinnPhongShaderProgram = nullptr; // the wrapper for our shader program
-    CSCI441::ShaderProgram *_textureShaderProgram = nullptr;    // the wrapper for our shader program
+    CSCI441::ShaderProgram *_blinnPhongShaderProgram = nullptr;
+    /// \desc shader program that handles large, unlit, textures (skybox)
+    CSCI441::ShaderProgram *_textureShaderProgram = nullptr;
+    /// \desc shader program that adds bump map to objects
     CSCI441::ShaderProgram *_bumpShaderProgram = nullptr;
+    CSCI441::ShaderProgram *_bitmapShaderProgram = nullptr;
 
-    /// \desc helper function to keep shader setup under control
+    // helper functions to keep shader setup under control
     void _setupBlinnPhongShader();
+    void _setupTextureShader();
+    void _setupBumpShader();
+    void _setupBitmapShader();
+
+    Light _pointLight;
+    Light _spotLight;
+    Light _skyLight;
+    void _updateLights();
 
     /// \desc stores the locations of all of our shader uniforms
     struct BlinnPhongShaderUniformLocations
@@ -207,10 +218,6 @@ private:
 
     } _textureShaderUniformLocations;
 
-    Light _pointLight;
-    Light _spotLight;
-    Light _skyLight;
-    void _updateLights();
     struct BumpShaderUniformLocation
     {
         GLint mvpMatrix;
@@ -224,6 +231,17 @@ private:
         GLint texMap;
         GLint norMap;
     } _bumpShaderUniformLocations;
+
+    struct BillboardShaderProgramUniforms
+    {
+        /// \desc the ModelView Matrix to apply
+        GLint mvMatrix;
+        /// \desc the Projection Matrix to apply
+        GLint projMatrix;
+        /// \desc the texture to apply
+        GLint image;
+    } _billboardShaderProgramUniforms;
+    /// \desc stores the locations of all of our shader attributes
 
     GLuint _tex;
     GLuint _nor;
@@ -252,6 +270,12 @@ private:
         GLint aTexCoord;
         GLint aTangent;
     } _bumpShaderAttributeLocations;
+
+    struct BillboardShaderProgramAttributes
+    {
+        /// \desc the vertex position
+        GLint vPos;
+    } _billboardShaderProgramAttributes;
 
     bool _rightPressed = false;
 
