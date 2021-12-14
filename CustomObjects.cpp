@@ -1,12 +1,13 @@
 #include "CustomObjects.hpp"
-//all custom objects auto setup buffers if the instance is null
+// all custom objects auto setup buffers if the instance is null
 CustomObjects &CustomObjects::instance()
 {
     static CustomObjects customObjects;
     return customObjects;
 }
 
-void CustomObjects::clearObjects(){
+void CustomObjects::clearObjects()
+{
     // #TODO clear objects
 }
 void CustomObjects::setupShaders(GLuint shaderProgramHandle, GLuint posLoc, GLuint normalLoc)
@@ -16,7 +17,7 @@ void CustomObjects::setupShaders(GLuint shaderProgramHandle, GLuint posLoc, GLui
     instance()._shaderAttribNormal = normalLoc;
 }
 
-//for environment and Chris
+// for environment and Chris
 void CustomObjects::drawCube()
 {
     if (instance()._cubeVAO == 0)
@@ -28,7 +29,7 @@ void CustomObjects::drawCube()
     glDrawElements(GL_TRIANGLES, instance()._cubePointsCount, GL_UNSIGNED_SHORT, (void *)0);
 }
 
-//ground plane
+// ground plane
 void CustomObjects::drawPlane()
 {
     if (instance()._modelPlane == nullptr)
@@ -39,7 +40,7 @@ void CustomObjects::drawPlane()
     instance()._modelPlane->draw(instance()._shaderProgramHandle);
 }
 
-//for thisisntme
+// for thisisntme
 void CustomObjects::drawCar()
 {
     if (instance()._modelCar == nullptr)
@@ -54,10 +55,10 @@ void CustomObjects::drawHorse(int frame)
     {
         instance()._setupBuffersHorse();
     }
-    instance()._modelHorse[frame%48]->draw(instance()._shaderProgramHandle);
+    instance()._modelHorse[frame % 48]->draw(instance()._shaderProgramHandle);
 }
 
-//for thisisntme
+// for thisisntme
 void CustomObjects::drawWheel()
 {
     if (instance()._modelWheel == nullptr)
@@ -67,7 +68,7 @@ void CustomObjects::drawWheel()
     instance()._modelWheel->draw(instance()._shaderProgramHandle);
 }
 
-//for environment
+// for environment
 void CustomObjects::drawTreeTop()
 {
     if (instance()._modelTreeTop == nullptr)
@@ -77,7 +78,7 @@ void CustomObjects::drawTreeTop()
     instance()._modelTreeTop->draw(instance()._shaderProgramHandle);
 }
 
-//for environment
+// for environment
 void CustomObjects::drawTreeTrunk()
 {
     if (instance()._modelTreeTrunk == nullptr)
@@ -87,7 +88,7 @@ void CustomObjects::drawTreeTrunk()
     instance()._modelTreeTrunk->draw(instance()._shaderProgramHandle);
 }
 
-//better cube with more verticies than 8 so we can get nicer lighting
+// better cube with more verticies than 8 so we can get nicer lighting
 void CustomObjects::_setupBuffersCube()
 {
     GLfloat CORNER_POINT = 0.5f;
@@ -182,19 +183,19 @@ void CustomObjects::_setupBuffersPlane()
 
 void CustomObjects::_setupBuffersHorse()
 {
-    for(int i = 1; i <= 48; i++){
+    for (int i = 1; i <= 48; i++)
+    {
         _modelHorse.push_back(new CSCI441::ModelLoader());
         string fileNum = to_string(i);
-        if(i < 10 ){
-            fileNum = "0" +  fileNum;
+        if (i < 10)
+        {
+            fileNum = "0" + fileNum;
         }
-        string fileString = "models/horse-gallop/horse-gallop-" + fileNum+".obj";
-        char* charArr= &fileString[0];
-        _modelHorse[i-1]->loadModelFile(charArr);
-        _modelHorse[i-1]->setAttributeLocations(instance()._shaderAttribPos, instance()._shaderAttribNormal);
+        string fileString = "models/horse-gallop/horse-gallop-" + fileNum + ".obj";
+        char *charArr = &fileString[0];
+        _modelHorse[i - 1]->loadModelFile(charArr);
+        _modelHorse[i - 1]->setAttributeLocations(instance()._shaderAttribPos, instance()._shaderAttribNormal);
     }
-
-
 }
 
 void CustomObjects::_setupBuffersCar()

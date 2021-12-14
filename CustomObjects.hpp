@@ -15,7 +15,7 @@ class CustomObjects
 public:
     static void setupShaders(GLuint shaderProgramHandle, GLuint posLoc, GLuint normalLoc);
     static void drawCube();
-    //obj file imports
+    // obj file imports
     static void drawPlane();
     static void drawCar();
     static void drawTreeTop();
@@ -44,9 +44,7 @@ private:
     CSCI441::ModelLoader *_modelTreeTop;
     CSCI441::ModelLoader *_modelTreeTrunk;
     CSCI441::ModelLoader *_modelWheel;
-    std::vector<CSCI441::ModelLoader*> _modelHorse;
-
-
+    std::vector<CSCI441::ModelLoader *> _modelHorse;
 };
 
 #endif // MP_CUSTOM_OBJECTS_HPP
