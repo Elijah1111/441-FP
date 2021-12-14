@@ -63,6 +63,7 @@ private:
 
     void _createSkybox();
     GLuint _loadAndRegisterTexture(const char *);
+    GLuint _loadAndRegisterFlatTexture(const char *);
 
     struct skybox
     {
@@ -118,34 +119,59 @@ private:
     /// \desc smart container to store information specific to each building we wish to draw
     struct BuildingData
     {
+        float w, d, h;
         /// \desc transformations to position and size the building
         glm::mat4 modelMatrix;
         /// \desc color to draw the building
         glm::vec3 color;
+        double pos; // position along the x axis
     };
     /// \desc information list of all the buildings to draw
     std::vector<BuildingData> _buildings;
+
+    struct BumpData
+    {
+        float w, d, h;
+
+        glm::mat4 modelMatrix;
+    };
+
+    std::vector<BumpData> _bumps;
 
     struct TreeData
     {
         /// \desc transformations to position and size the building
         glm::mat4 topModMatrix;
         glm::mat4 trunkModMatrix;
+        double pos; // position in the x axis
         glm::vec3 green = glm::vec3(0.0, 0.8, 0.0);
         glm::vec3 brown = glm::vec3(0.325, 0.192, 0.094);
     };
     std::vector<TreeData> _trees;
 
     std::vector<Obstacle> _obs; // obstacles
+    int obstacleSlots = 10;     // how many obstacles can be sapwned at a time
+    unsigned int lastSpawnedFrame = 0;
+    unsigned int currentFrame = 180; // current game time
+    // does not start at zero to fix issue with spawining obstacles the first time
+
+    bool pause;              // pasue the obstacles
+    void _createObstacle();  // creates an obstacle
+    void spawnControl(bool); // controls spawning obstacles
+
+    void frame(); // track frame updates
 
     /// \desc generates building information to make up our scene
     void _generateEnvironment();
-
-    void _createObstacle(); // creates an obstacle
+    void spawnBackground(); // spawn more background elements
+    bool _stepBackground(glm::mat4 *, glm::mat4 *, double *, bool);
+    float _backgroundSpeed = 0.25; // speed of the background
+    unsigned int lastBackgroundFrame = 0;
 
     /// \desc shader program that performs lighting
     CSCI441::ShaderProgram *_blinnPhongShaderProgram = nullptr; // the wrapper for our shader program
     CSCI441::ShaderProgram *_textureShaderProgram = nullptr;    // the wrapper for our shader program
+    CSCI441::ShaderProgram *_bumpShaderProgram = nullptr;
 
     /// \desc helper function to keep shader setup under control
     void _setupBlinnPhongShader();
@@ -185,6 +211,22 @@ private:
     Light _spotLight;
     Light _skyLight;
     void _updateLights();
+    struct BumpShaderUniformLocation
+    {
+        GLint mvpMatrix;
+        GLint model;
+
+        GLint pPos;
+        GLint pCol;
+
+        GLint vPos;
+
+        GLint texMap;
+        GLint norMap;
+    } _bumpShaderUniformLocations;
+
+    GLuint _tex;
+    GLuint _nor;
 
     struct TextureShaderAttributeLocations
     { // locations for texture atrib
@@ -203,6 +245,14 @@ private:
         GLint vTexCoords;
     } _blinnPhongShaderAttributeLocations;
 
+    struct BumpShaderAttributeLocations
+    {
+        GLint aPos;
+        GLint aNormal;
+        GLint aTexCoord;
+        GLint aTangent;
+    } _bumpShaderAttributeLocations;
+
     bool _rightPressed = false;
 
     /// \desc precomputes the matrix uniforms CPU-side and then sends them
@@ -213,6 +263,10 @@ private:
     /// \param projMtx camera projection matrix
     void _computeAndSendMatrixUniforms(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx) const;
     void _sendMaterial(Material material) const;
+    void _drawRecBumped(float h, float w, float d);
+
+    GLuint _faceVAO;
+    GLuint _faceVBO;
 };
 /// \desc functions for user interactions
 void keyboard_callback(GLFWwindow *window, int key, int scancode, int action, int mods);

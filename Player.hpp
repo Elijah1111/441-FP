@@ -36,16 +36,14 @@ public:
     void moveLeft(double);  // move left
     void moveRight(double); // move right
 
-    void jump(); // jump
-
-    void frame(); // increase frame number
-
-    glm::vec3 pos = glm::vec3(5, 0, 0); // where the player is in space
+    glm::vec3 pos = glm::vec3(5, 0, 0);          // where the player is in space
+    glm::vec4 bBox[4] = {glm::vec4(0, 0, 0, 0)}; // changing Bounding Box
 private:
     const float G = 0.1;  // gravity
     bool airborn = false; // have we jumped?
     float accel = 0.0;    // acceleration
-    int t = 0;
+    int t = 0;            // animation frame
+
     /// \desc handle of the shader program to use when drawing the player
     GLuint _shaderProgramHandle;
     /// \desc stores the uniform locations needed for the plan information
@@ -61,10 +59,12 @@ private:
         GLint modelMtx;
     } _shaderProgramUniformLocations;
 
-    /// \desc amount to scale the player's body by
-    glm::vec3 _scaleBody; // TODO this does nothing
-
-    GLint _frameI = 0; // frame index
+    GLint _frameI = 0;        // frame index
+    glm::vec4 bBoxCont[4] = { // Control points for its bounding box
+        glm::vec4(-0.5, 1.0, -0.5, 1),
+        glm::vec4(0.5, 1.0, 0.5, 1),
+        glm::vec4(0, 0, 0.5, 1),
+        glm::vec4(0, 0, -0.5, 1)};
 
     /// \desc precomputes the matrix uniforms CPU-side and then sends them
     /// to the GPU to be used in the shader for each vertex.  It is more efficient
