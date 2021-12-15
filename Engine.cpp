@@ -963,10 +963,7 @@ void Engine::_updateScene()
     if (_keys[GLFW_KEY_O])
     {                              // spawn a obstale
         _keys[GLFW_KEY_O] = false; // consume that input
-        if (_keys[GLFW_KEY_LEFT_SHIFT] || _keys[GLFW_KEY_RIGHT_SHIFT])
-            _spawnBackground();
-        else
-            _createObstacle();
+        _createObstacle();
     }
     if (_keys[GLFW_KEY_P])
     {

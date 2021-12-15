@@ -38,7 +38,6 @@ Added dynamic spotlight that moves with player and changes color on collision, a
 | P         | Pause Obstacles       |
 | SHIFT + P | Pause Background      |
 | O         | Spawn Obstacles       |
-| SHIFT + O | Spawn Background Wave |
 | 0         | Toggle Free Cam       |
 | W         | Jump                  |
 | A         | Move Left             |
