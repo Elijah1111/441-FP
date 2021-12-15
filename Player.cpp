@@ -16,6 +16,7 @@ Player::Player(GLuint shaderProgramHandle, GLint mvpMtxUniformLocation, GLint no
 
 void Player::moveLeft(double s)
 {
+    t-=.5;
 	double tmp = pos.z;
 	tmp += s;
 	if (fabs(tmp) >= 10) // Bounds Check
@@ -25,6 +26,7 @@ void Player::moveLeft(double s)
 
 void Player::moveRight(double s)
 {
+    t++;
 	double tmp = pos.z;
 	tmp -= s;
 	if (fabs(tmp) >= 10) // Bounds Check
@@ -51,7 +53,7 @@ void Player::drawMe(glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx)
 
 	_computeAndSendMatrixUniforms(modelMtx, viewMtx, projMtx);
 	_sendMaterial(EMERALD);
-	CustomObjects::drawHorse(t);
+	CustomObjects::drawHorse(static_cast<int>(t));
 	// TODO rebind modelMtx, it inhereats color from the Obstacles
 	for (int i = 0; i < 4; i++)
 	{									  // update bounding Box

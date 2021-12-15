@@ -46,7 +46,7 @@ private:
     const float G = 0.1;  // gravity
     bool airborn = false; // have we jumped?
     float accel = 0.0;    // acceleration
-    int t = 0;            // animation frame
+    float t = 0;            // animation frame
 
     /// \desc handle of the shader program to use when drawing the player
     GLuint _shaderProgramHandle;
