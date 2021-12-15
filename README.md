@@ -21,6 +21,10 @@ We each contributed all over the place, so there was a good deal of overlap, but
 ### Elijah
 ### Shane
 ### Benjamin
+Created the Bump Map shader for the brick buildings. It uses multiple light sources and a Blinn-Phong Model under the hood. \
+To accompany the bump map shader, a custom function for creating 3D rectangular prisms that are to be textured was built. \
+This function calculates the tangent space on each face of the rectangular prism for the shader to use. \
+Helped build world that this project is based off of. 
 ### Jonathan
 Created the Blinn Phong shader used for general lighting. Shader allows for multiple light sources and uses of different materials. \
 Created billboard shader that uses a geometry shader to produce billboards. Billboards are used for hearts and scoreboard. \
@@ -55,7 +59,7 @@ Added dynamic spotlight that moves with player and changes color on collision, a
 | -------- | ---------- | ---------------- | --------- |
 | Elijah   | 12hrs       | 7/10            | 9/10      |
 | Jonathan | 9hrs       | 8/10             | 8/10      |
-| Benjamin | ?hrs       | ?/10             | ?/10      |
+| Benjamin | 7hrs       | 6/10             | 8/10      |
 | Shane    | ?hrs       | ?/10             | ?/10      |
 
 ## Credit
@@ -63,8 +67,8 @@ Added dynamic spotlight that moves with player and changes color on collision, a
 | ----------------- | -------------------------------------------- | ------------------- |
 | Elijah Mt. Castle | @[Elijah1111](https://github.com/Elijah1111) | mtcastle@mines.edu  |
 | Jonathan Woolf    | @[jlwoolf](https://github.com/jlwoolf)       | jlwoolf@mines.edu   |
-| Shane Cranor      | @[bwagley](https://github.com/bwagley)       | someemail@email.com |
-| Benjamin Wagley   | @[jlwoolf](https://github.com/jlwoolf)       | someemail@email.com |
+| Ben Wagley        | @[bwagley](https://github.com/bwagley)       | bwagley@mines.edu   |
+| Shane Cranor      | @[jlwoolf](https://github.com/jlwoolf)       | someemail@email.com |
 
 
 
