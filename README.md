@@ -6,22 +6,35 @@ Final Project for CSCI 441
 
 
 # Controls
-1 - Pause Obstacles
-2 - Spawn Background Wave
-9 - Spawn Obstacle
-0 - Toggle Free Cam
+### In Game Controls
+| Key       | Description           |
+| --------- | --------------------- |
+| P         | Pause Obstacles       |
+| SHIFT + P | Pause Background      |
+| O         | Spawn Obstacles       |
+| SHIFT + O | Spawn Background Wave |
+| 0         | Toggle Free Cam       |
+| W         | Jump                  |
+| A         | Move Left             |
+| D         | Move Right            |
 
-W - Jump
-A - Move Left
-D - Move Right
-
-In Free Cam Mode
-WASD - To Move Camera
+### Free Cam Controls
+| Key           | Description  |
+| ------------- | ------------ |
+| W             | Look Up      |
+| S             | Look Down    |
+| A             | Look Left    |
+| D             | Look Right   |
+| Space         | Move Forward |
+| Space + SHIFT | Move Forward |
 
 # Credit
-
-@[Elijah1111](https://github.com/Elijah1111)
-...
+| Name              | Github                                       | Email               |
+| ----------------- | -------------------------------------------- | ------------------- |
+| Elijah Mt. Castle | @[Elijah1111](https://github.com/Elijah1111) | someemail@email.com |
+| Jonathan Woolf    | @[jlwoolf](https://github.com/jlwoolf)       | jlwoolf@mines.edu   |
+| Shane Cranor      | @[bwagley](https://github.com/bwagley)       | someemail@email.com |
+| Benjamin Wagley   | @[jlwoolf](https://github.com/jlwoolf)       | someemail@email.com |
 
 
 
