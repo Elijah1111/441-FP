@@ -17,6 +17,7 @@ public:
     static void drawCube();
     // obj file imports
     static void drawPlane();
+    static void drawTeapot();
     static void drawCar();
     static void drawTreeTop();
     static void drawTreeTrunk();
@@ -26,6 +27,7 @@ public:
 
 private:
     void _setupBuffersCube();
+    void _setupBuffersTeapot();
     void _setupBuffersPlane();
     void _setupBuffersCar();
     void _setupBuffersHorse();
@@ -39,6 +41,7 @@ private:
     GLuint _shaderAttribPos;
     GLuint _shaderAttribNormal;
 
+    CSCI441::ModelLoader *_modelTeapot;
     CSCI441::ModelLoader *_modelPlane;
     CSCI441::ModelLoader *_modelCar;
     CSCI441::ModelLoader *_modelTreeTop;

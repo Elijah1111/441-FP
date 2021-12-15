@@ -40,6 +40,16 @@ void CustomObjects::drawPlane()
     instance()._modelPlane->draw(instance()._shaderProgramHandle);
 }
 
+void CustomObjects::drawTeapot()
+{
+    if (instance()._modelTeapot == nullptr)
+    {
+        instance()._setupBuffersTeapot();
+    }
+
+    instance()._modelTeapot->draw(instance()._shaderProgramHandle);
+}
+
 // for thisisntme
 void CustomObjects::drawCar()
 {
@@ -172,6 +182,13 @@ void CustomObjects::_setupBuffersCube()
     glVertexAttribPointer(_shaderAttribPos, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0);
     glEnableVertexAttribArray(_shaderAttribNormal);
     glVertexAttribPointer(_shaderAttribNormal, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(sizeof(GL_FLOAT) * 3));
+}
+
+void CustomObjects::_setupBuffersTeapot()
+{
+    _modelTeapot = new CSCI441::ModelLoader();
+    _modelTeapot->loadModelFile("models/teapot.obj");
+    _modelTeapot->setAttributeLocations(instance()._shaderAttribPos, instance()._shaderAttribNormal);
 }
 
 void CustomObjects::_setupBuffersPlane()
