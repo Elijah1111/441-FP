@@ -11,19 +11,20 @@ Outside of general gameply, there a several controls that alter the world and in
 
 ## Compilation
 
-Compile using CMake. You may need to alter the CMakeLists.txt path's for the include and lib if your include and lib directories are in a different location than the default we've been using for the class. Otherwise, everything should run fine once configured and built.
+Compile using CMake. You may need to alter the CMakeLists.txt path's for the include and lib if your include and lib directories are in a different location than the default we've been using for the class. Also, make sure to set the working directory to that of the projects, not the build directory. Afterwhich, everything should run fine.
 
 ## Bugs
-?
+None that we know of.
 
 ## Responsibilites
+We each contributed all over the place, so there was a good deal of overlap, but below are areas where we each focused more specifically.
 ### Elijah
 ### Shane
 ### Benjamin
 ### Jonathan
-Created the Blinn Phong shader used for general lighting. Shader allows for multiple light sources and use of different materials. \
+Created the Blinn Phong shader used for general lighting. Shader allows for multiple light sources and uses of different materials. \
 Created billboard shader that uses a geometry shader to produce billboards. Billboards are used for hearts and scoreboard. \
-Added lives and scoreboard that grows with progress. \
+Added lives and scoreboard that grows with progress, along with automatic respawning. \
 Added dynamic spotlight that moves with player and changes color on collision, along with player flickering.
 
 ## Controls
