@@ -674,14 +674,14 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx)
     _buildings = tmpBuild;
 
     // BEGIN DRAW SKYBOX
-    _textureShaderProgram->useProgram();
-    tmpModel = glm::translate(glm::mat4(1.0f), glm::vec3(0, WORLD_SIZE, 0));
-    mvpMtx = projMtx * viewMtx * tmpModel;
-    _textureShaderProgram->setProgramUniform(
-        _textureShaderUniformLocations.mvpMatrix, mvpMtx);
-    _computeAndSendMatrixUniforms(tmpModel, viewMtx, projMtx);
-    CSCI441::setVertexAttributeLocations(_textureShaderAttributeLocations.vPos);
-    CSCI441::drawSolidCubeTextured(WORLD_SIZE * 3);
+//    _textureShaderProgram->useProgram();
+//    tmpModel = glm::translate(glm::mat4(1.0f), glm::vec3(0, WORLD_SIZE, 0));
+//    mvpMtx = projMtx * viewMtx * tmpModel;
+//    _textureShaderProgram->setProgramUniform(
+//        _textureShaderUniformLocations.mvpMatrix, mvpMtx);
+//    _computeAndSendMatrixUniforms(tmpModel, viewMtx, projMtx);
+//    CSCI441::setVertexAttributeLocations(_textureShaderAttributeLocations.vPos);
+//    CSCI441::drawSolidCubeTextured(WORLD_SIZE * 3);
 
     // use our lighting shader program
     _blinnPhongShaderProgram->useProgram();
@@ -1006,6 +1006,9 @@ void Engine::_updateLights()
     _blinnPhongShaderProgram->setProgramUniform(_blinnPhongShaderUniformLocations.skyLight.diffuse, _skyLight.diffuse);
     _blinnPhongShaderProgram->setProgramUniform(_blinnPhongShaderUniformLocations.skyLight.specular, _skyLight.specular);
     _blinnPhongShaderProgram->setProgramUniform(_blinnPhongShaderUniformLocations.skyLight.visible, _skyLight.visible);
+
+    _bumpShaderProgram->setProgramUniform(_bumpShaderUniformLocations.pPos, _pointLight.position);
+    _bumpShaderProgram->setProgramUniform(_bumpShaderUniformLocations.pCol, _pointLight.diffuse);
 }
 
 void Engine::run()
