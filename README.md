@@ -53,7 +53,7 @@ Added dynamic spotlight that moves with player and changes color on collision, a
 ## Other
 | Person   | Time Spent | Lab Preparedness | Funometer |
 | -------- | ---------- | ---------------- | --------- |
-| Elijah   | 8hrs       | 7/10             | 9/10      |
+| Elijah   | 12hrs       | 7/10            | 9/10      |
 | Jonathan | 9hrs       | 8/10             | 8/10      |
 | Benjamin | ?hrs       | ?/10             | ?/10      |
 | Shane    | ?hrs       | ?/10             | ?/10      |
@@ -61,7 +61,7 @@ Added dynamic spotlight that moves with player and changes color on collision, a
 ## Credit
 | Name              | Github                                       | Email               |
 | ----------------- | -------------------------------------------- | ------------------- |
-| Elijah Mt. Castle | @[Elijah1111](https://github.com/Elijah1111) | someemail@email.com |
+| Elijah Mt. Castle | @[Elijah1111](https://github.com/Elijah1111) | mtcastle@mines.edu  |
 | Jonathan Woolf    | @[jlwoolf](https://github.com/jlwoolf)       | jlwoolf@mines.edu   |
 | Shane Cranor      | @[bwagley](https://github.com/bwagley)       | someemail@email.com |
 | Benjamin Wagley   | @[jlwoolf](https://github.com/jlwoolf)       | someemail@email.com |
