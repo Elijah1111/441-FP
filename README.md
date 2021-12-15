@@ -20,6 +20,9 @@ None that we know of.
 We each contributed all over the place, so there was a good deal of overlap, but below are areas where we each focused more specifically.
 ### Elijah
 ### Shane
+Implemented model loader and animations. The model loader has the ability to procedurally import sequentially numbered models
+As the horse moves faster, the animation increases in speed and as the horse moves slower the animation slows down. \
+Imported and arranged a custom dark spooky skybox.
 ### Benjamin
 Created the Bump Map shader for the brick buildings. It uses multiple light sources and a Blinn-Phong Model under the hood. \
 To accompany the bump map shader, a custom function for creating 3D rectangular prisms that are to be textured was built. \
@@ -38,7 +41,6 @@ Added dynamic spotlight that moves with player and changes color on collision, a
 | P         | Pause Obstacles       |
 | SHIFT + P | Pause Background      |
 | O         | Spawn Obstacles       |
-| SHIFT + O | Spawn Background Wave |
 | 0         | Toggle Free Cam       |
 | W         | Jump                  |
 | A         | Move Left             |
@@ -57,18 +59,18 @@ Added dynamic spotlight that moves with player and changes color on collision, a
 ## Other
 | Person   | Time Spent | Lab Preparedness | Funometer |
 | -------- | ---------- | ---------------- | --------- |
-| Elijah   | 12hrs       | 7/10            | 9/10      |
+| Elijah   | 12hrs      | 7/10             | 9/10      |
 | Jonathan | 9hrs       | 8/10             | 8/10      |
 | Benjamin | 7hrs       | 6/10             | 8/10      |
-| Shane    | ?hrs       | ?/10             | ?/10      |
+| Shane    | 7hrs       | 7/10             | 8/10      |
 
 ## Credit
-| Name              | Github                                       | Email               |
-| ----------------- | -------------------------------------------- | ------------------- |
-| Elijah Mt. Castle | @[Elijah1111](https://github.com/Elijah1111) | mtcastle@mines.edu  |
-| Jonathan Woolf    | @[jlwoolf](https://github.com/jlwoolf)       | jlwoolf@mines.edu   |
-| Ben Wagley        | @[bwagley](https://github.com/bwagley)       | bwagley@mines.edu   |
-| Shane Cranor      | @[jlwoolf](https://github.com/jlwoolf)       | someemail@email.com |
+| Name              | Github                                       | Email                  |
+| ----------------- | -------------------------------------------- | ---------------------- |
+| Elijah Mt. Castle | @[Elijah1111](https://github.com/Elijah1111) | mtcastle@mines.edu     |
+| Jonathan Woolf    | @[jlwoolf](https://github.com/jlwoolf)       | jlwoolf@mines.edu      |
+| Ben Wagley        | @[bwagley](https://github.com/bwagley)       | bwagley@mines.edu      |
+| Shane Cranor      | @[jlwoolf](https://github.com/jlwoolf)       | shanecranor@mines.edu  |
 
 
 
