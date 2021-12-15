@@ -56,18 +56,18 @@ Added dynamic spotlight that moves with player and changes color on collision, a
 ## Other
 | Person   | Time Spent | Lab Preparedness | Funometer |
 | -------- | ---------- | ---------------- | --------- |
-| Elijah   | 12hrs       | 7/10            | 9/10      |
+| Elijah   | 12hrs      | 7/10             | 9/10      |
 | Jonathan | 9hrs       | 8/10             | 8/10      |
 | Benjamin | 7hrs       | 6/10             | 8/10      |
-| Shane    | ?hrs       | ?/10             | ?/10      |
+| Shane    | 7hrs       | 7/10             | 8/10      |
 
 ## Credit
-| Name              | Github                                       | Email               |
-| ----------------- | -------------------------------------------- | ------------------- |
-| Elijah Mt. Castle | @[Elijah1111](https://github.com/Elijah1111) | mtcastle@mines.edu  |
-| Jonathan Woolf    | @[jlwoolf](https://github.com/jlwoolf)       | jlwoolf@mines.edu   |
-| Ben Wagley        | @[bwagley](https://github.com/bwagley)       | bwagley@mines.edu   |
-| Shane Cranor      | @[jlwoolf](https://github.com/jlwoolf)       | someemail@email.com |
+| Name              | Github                                       | Email                  |
+| ----------------- | -------------------------------------------- | ---------------------- |
+| Elijah Mt. Castle | @[Elijah1111](https://github.com/Elijah1111) | mtcastle@mines.edu     |
+| Jonathan Woolf    | @[jlwoolf](https://github.com/jlwoolf)       | jlwoolf@mines.edu      |
+| Ben Wagley        | @[bwagley](https://github.com/bwagley)       | bwagley@mines.edu      |
+| Shane Cranor      | @[jlwoolf](https://github.com/jlwoolf)       | shanecranor@mines.edu  |
 
 
 
