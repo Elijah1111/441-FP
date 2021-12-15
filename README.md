@@ -10,7 +10,8 @@ The night is dark and there are obstacles ahead! Play as a small horse running t
 Outside of general gameplay, there a several controls that alter the world and interaction. Pressing P will pause obstacles (and the score), while pressing O will spawn extra obstacles. If you hold down SHIFT while pressing P, however, the background will freeze in place. Pressing O while holding SHIFT will also spawn extra background objects. Finally, pressing 0 (zero) will exit gameplay in put you in free camera mode where you can move around the world. Pressing WASD will change where you look, and SPACE or SPACE + SHIFT will move you forwards or backwards respectively.
 
 Easter Egg: \
-What is that red ball light in the background. Maybe I should use free cam to look at it... 
+What is that red ball light in the background. Maybe I should use free cam to look at it... \
+I wonder if there is anything weird about the skybox...
 
 ## Compilation
 
