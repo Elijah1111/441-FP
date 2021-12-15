@@ -305,7 +305,7 @@ void Engine::_createObstacle()
     glm::mat4 transToSpotMtx = glm::translate(glm::mat4(1.0), glm::vec3(5.0f, 0.0f, -p));
 
     // compute random height
-    GLdouble height = powf(getRand(), 2.5) * 4 + 1; // TODO tweak height to be more fair
+    GLdouble height = powf(getRand(), 2.5) * 3.25 + 1; // TODO tweak height to be more fair
     // scale to size
     glm::mat4 scaleToHeightMtx = glm::scale(glm::mat4(1.0), glm::vec3(1, height, 1));
 

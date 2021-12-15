@@ -1,5 +1,5 @@
 # 441-FP - There And Back Again
-## Guild - ?
+## Guild - Humble Dragon
 
 Guild consists of Elijah Mt. Castle, Shane Cranor, Jonathan Woolf, and Benjamin Wagley.
 
@@ -8,6 +8,10 @@ Guild consists of Elijah Mt. Castle, Shane Cranor, Jonathan Woolf, and Benjamin 
 The night is dark and there are obstacles ahead! Play as a small horse running through a desolated city at night. Jump over abandoned structures that block your path. Position yourself using A and D, pressing W to leap over the towers. Be careful, though; if you hit a tower you'll loose one of your valuable 4 lives. If you run out of lives you'll have to start all over. There's a score in the top right that tracks how far you've made it. How far do you think you can go?
 
 Outside of general gameplay, there a several controls that alter the world and interaction. Pressing P will pause obstacles (and the score), while pressing O will spawn extra obstacles. If you hold down SHIFT while pressing P, however, the background will freeze in place. Pressing O while holding SHIFT will also spawn extra background objects. Finally, pressing 0 (zero) will exit gameplay in put you in free camera mode where you can move around the world. Pressing WASD will change where you look, and SPACE or SPACE + SHIFT will move you forwards or backwards respectively.
+
+Easter Eggs: \
+What is that red ball light in the background. Maybe I should use free cam to look at it... \
+Wonder what happens if you fly outside the skybox...
 
 ## Compilation
 
@@ -36,15 +40,15 @@ Added dynamic spotlight that moves with player and changes color on collision, a
 
 ## Controls
 ### In Game Controls
-| Key       | Description           |
-| --------- | --------------------- |
-| P         | Pause Obstacles       |
-| SHIFT + P | Pause Background      |
-| O         | Spawn Obstacles       |
-| 0         | Toggle Free Cam       |
-| W         | Jump                  |
-| A         | Move Left             |
-| D         | Move Right            |
+| Key       | Description      |
+| --------- | ---------------- |
+| P         | Pause Obstacles  |
+| SHIFT + P | Pause Background |
+| O         | Spawn Obstacles  |
+| 0         | Toggle Free Cam  |
+| W         | Jump             |
+| A         | Move Left        |
+| D         | Move Right       |
 
 ### Free Cam Controls
 | Key           | Description  |
@@ -65,12 +69,12 @@ Added dynamic spotlight that moves with player and changes color on collision, a
 | Shane    | 7hrs       | 7/10             | 8/10      |
 
 ## Credit
-| Name              | Github                                       | Email                  |
-| ----------------- | -------------------------------------------- | ---------------------- |
-| Elijah Mt. Castle | @[Elijah1111](https://github.com/Elijah1111) | mtcastle@mines.edu     |
-| Jonathan Woolf    | @[jlwoolf](https://github.com/jlwoolf)       | jlwoolf@mines.edu      |
-| Ben Wagley        | @[bwagley](https://github.com/bwagley)       | bwagley@mines.edu      |
-| Shane Cranor      | @[jlwoolf](https://github.com/jlwoolf)       | shanecranor@mines.edu  |
+| Name              | Github                                       | Email                 |
+| ----------------- | -------------------------------------------- | --------------------- |
+| Elijah Mt. Castle | @[Elijah1111](https://github.com/Elijah1111) | mtcastle@mines.edu    |
+| Jonathan Woolf    | @[jlwoolf](https://github.com/jlwoolf)       | jlwoolf@mines.edu     |
+| Ben Wagley        | @[bwagley](https://github.com/bwagley)       | bwagley@mines.edu     |
+| Shane Cranor      | @[jlwoolf](https://github.com/jlwoolf)       | shanecranor@mines.edu |
 
 
 
