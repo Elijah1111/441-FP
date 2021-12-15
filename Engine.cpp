@@ -43,6 +43,11 @@ Engine::Engine(int OPENGL_MAJOR_VERSION, int OPENGL_MINOR_VERSION,
 
     _mousePosition = glm::vec2(MOUSE_UNINITIALIZED, MOUSE_UNINITIALIZED);
     _leftMouseButtonState = GLFW_RELEASE;
+    _health = 3;
+    _score = 0;
+    _collided = 0;
+    _pauseObstacles = false;
+    _pauseBackground = false;
 }
 
 Engine::~Engine()
@@ -147,6 +152,7 @@ void Engine::_setupShaders()
     _setupBlinnPhongShader();
     _setupTextureShader();
     _setupBumpShader();
+    _setupBillboardShader();
 }
 
 void Engine::_setupBlinnPhongShader()
@@ -235,6 +241,25 @@ void Engine::_setupBumpShader()
     _bumpShaderAttributeLocations.aTangent = _bumpShaderProgram->getAttributeLocation("aTangent");
 }
 
+void Engine::_setupBillboardShader()
+{
+    _billboardShaderProgram = new CSCI441::ShaderProgram(
+        "shaders/billboard.v.glsl",
+        "shaders/billboard.g.glsl",
+        "shaders/billboard.f.glsl");
+
+    // get uniform locations
+    _billboardShaderProgramUniforms.mvMatrix = _billboardShaderProgram->getUniformLocation("mvMtx");
+    _billboardShaderProgramUniforms.projMatrix = _billboardShaderProgram->getUniformLocation("projMtx");
+    _billboardShaderProgramUniforms.image = _billboardShaderProgram->getUniformLocation("image");
+    _billboardShaderProgramUniforms.size = _billboardShaderProgram->getUniformLocation("size");
+    // get attribute locations
+    _billboardShaderProgramAttributes.vPos = _billboardShaderProgram->getAttributeLocation("vPos");
+
+    // set static uniforms
+    _billboardShaderProgram->setProgramUniform(_billboardShaderProgramUniforms.image, 0);
+}
+
 void Engine::_setupBuffers()
 {
 
@@ -255,6 +280,22 @@ void Engine::_setupBuffers()
 
     glGenVertexArrays(1, &_faceVAO);
     glGenBuffers(1, &_faceVBO);
+
+    _setupBillboards();
+}
+
+void Engine::_setupBillboards()
+{
+    glGenVertexArrays(1, &_billboardVAO);
+    glBindVertexArray(_billboardVAO);
+    glGenBuffers(1, &_billboardVBO);
+
+    glm::vec3 _origin = glm::vec3(0.0f, 0.0f, 0.0f);
+    glBindBuffer(GL_ARRAY_BUFFER, _billboardVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3), &_origin, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(_billboardShaderProgramAttributes.vPos);
+    glVertexAttribPointer(_billboardShaderProgramAttributes.vPos, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
 }
 
 void Engine::_createObstacle()
@@ -281,7 +322,7 @@ void Engine::_createObstacle()
     _obs.emplace_back(ob);
 }
 
-void Engine::spawnControl(bool pause)
+void Engine::_spawnControl(bool pause)
 {
     if (pause)
         return; // do not spawn when paused
@@ -338,12 +379,14 @@ void Engine::_createGroundBuffers()
 
 bool Engine::_stepBackground(glm::mat4 *model, glm::mat4 *tree, double *pos, bool type)
 {
+    if (!_pauseBackground)
+    {
+        (*pos) += _backgroundSpeed;
 
-    (*pos) += _backgroundSpeed;
-
-    (*model) = glm::translate(*model, glm::vec3(0, 0, _backgroundSpeed));
-    if (type) // move the trees other model aswell
-        (*tree) = glm::translate(*tree, glm::vec3(0, 0, _backgroundSpeed));
+        (*model) = glm::translate(*model, glm::vec3(0, 0, _backgroundSpeed));
+        if (type) // move the trees other model aswell
+            (*tree) = glm::translate(*tree, glm::vec3(0, 0, _backgroundSpeed));
+    }
 
     if ((*pos) >= 60)
     { // delete when it gets out of bounds
@@ -519,9 +562,9 @@ void Engine::_setupScene()
                          // attenuation constants
                          1.0f, 0.001f, 0.001f,
                          // ambient, diffuse, specular
-                         glm::vec3(0.0f, 1.0f, 0.0f),
-                         glm::vec3(0.0f, 1.0f, 0.0f),
-                         glm::vec3(0.0f, 0.5f, 0.0f),
+                         glm::vec3(1.0f, 0.25f, 0.0f),
+                         glm::vec3(1.0f, 0.25f, 0.0f),
+                         glm::vec3(0.5f, 0.125f, 0.0f),
                          // visible
                          true});
     // SETUP Spot Light
@@ -533,15 +576,15 @@ void Engine::_setupScene()
                         // attenuation
                         1.0f, 0.001f, 0.001f,
                         // ambient, diffuse, specular
-                        glm::vec3(1.0f, 0.0f, 0.0f),
-                        glm::vec3(1.0f, 0.0f, 0.0f),
-                        glm::vec3(1.0f, 0.0f, 0.0f),
+                        glm::vec3(0.0f, 1.0f, 0.0f),
+                        glm::vec3(0.0f, 1.0f, 0.0f),
+                        glm::vec3(0.0f, 1.0f, 0.0f),
                         // visible
                         true});
     // SETUP Sky Light
     _skyLight = Light({// position (ignore), direction
                        glm::vec3(),
-                       glm::vec3(-1.0f, -1.0f, -1.0f),
+                       glm::vec3(1.0f, -1.0f, -1.0f),
                        // theta, falloff (ignore)
                        0.0f, 0.0f,
                        // attenuation (ignore)
@@ -619,6 +662,7 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx)
         glBindTexture(GL_TEXTURE_2D, _tex);
         glActiveTexture(GL_TEXTURE0 + 4);
         glBindTexture(GL_TEXTURE_2D, _nor);
+        glDisable(GL_TEXTURE_2D);
 
         _drawRecBumped(b->h, b->w, b->d);
 
@@ -664,8 +708,8 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx)
     glm::mat4 tmp = glm::translate(glm::mat4(1.0), glm::vec3(-WORLD_SIZE / 2,
                                                              10.0f, -WORLD_SIZE / 2));
     _computeAndSendMatrixUniforms(tmp, viewMtx, projMtx);
-    _sendMaterial(FULL_GREEN);
-    CSCI441::drawSolidSphere(1.0, 100, 100);
+    _sendMaterial(FULL_RED);
+    CustomObjects::drawTeapot();
 
     //// END DRAWING THE GREEN SUN////
 
@@ -674,8 +718,22 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx)
     tmp = glm::translate(tmp, glm::vec3(0.0f, -2.2f, 0.0f));
     _computeAndSendMatrixUniforms(tmp, viewMtx, projMtx);
     glm::vec3 red = glm::vec3(1, 0, 0);
-    _sendMaterial(FULL_RED);
-    CSCI441::drawSolidCone(1.0, 2.19, 100, 100);
+    _sendMaterial(GRAY_FLAT);
+    CSCI441::drawSolidCone(1.0f, 1.5f, 100, 100);
+    CSCI441::drawSolidCone(1.0f, 1.0f, 100, 100);
+
+    glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
+    color.r = _collided / 100.0f;
+    color.g -= _collided / 100.0f;
+    Material lightMaterial = {
+        color,
+        color,
+        color,
+        0.1f};
+    _sendMaterial(lightMaterial);
+    tmp = glm::translate(tmp, glm::vec3(0.0f, 0.35f, 0.0f));
+    _computeAndSendMatrixUniforms(tmp, viewMtx, projMtx);
+    CSCI441::drawSolidSphere(0.5f, 100, 100);
     //// END DRAWING THE RED CONE////
 
     //// BEGIN DRAWING THE BUILDINGS ////
@@ -736,8 +794,8 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx)
         plasticMaterial.specular *= currentObs.color;
         _sendMaterial(plasticMaterial);
 
-        CSCI441::drawSolidCube(1.0);
-        if (!currentObs.step(pause))
+        CustomObjects::drawCube();
+        if (!currentObs.step(_pauseObstacles))
         {
             tmpObs.push_back(currentObs);
         }
@@ -745,7 +803,12 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx)
             obstacleSlots++;
         if (currentObs.collide(_player))
         { // TODO do something with this
-          // fprintf(stdout,"\nCollision\n\n");
+            if (_collided <= 0)
+            {
+                // fprintf(stdout, "\nCollision\n\n");
+                _collided = 100;
+                _health -= 1;
+            }
         }
         _obs[i] = currentObs;
     }
@@ -762,17 +825,47 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx)
     glm::mat4 modelMtx0 = glm::translate(modelMtx, _player->pos);
 
     // DRAW PLAYER
-    _player->drawMe(modelMtx0, viewMtx, projMtx);
+    if (int(_collided / 10) % 2 == 0)
+        _player->drawMe(modelMtx0, viewMtx, projMtx);
 
     //// END DRAWING MODELS ////
+    if (!_camStat.free)
+    {
+        _billboardShaderProgram->useProgram();
+        _billboardShaderProgram->setProgramUniform(_billboardShaderProgramUniforms.projMatrix, projMtx);
+        _billboardShaderProgram->setProgramUniform(_billboardShaderProgramUniforms.size, 0.005f);
+        glBindVertexArray(_billboardVAO);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, _heartTextureHandle);
+
+        for (int i = 0; i < _health; i++)
+        {
+            glm::mat4 heartMtx = glm::translate(modelMtx, glm::vec3(19.9f, 4.955f, 0.06f - i * 0.015));
+            _billboardShaderProgram->setProgramUniform(_billboardShaderProgramUniforms.mvMatrix, viewMtx * heartMtx);
+            glDrawArrays(GL_POINTS, 0, 1);
+        }
+
+        _billboardShaderProgram->setProgramUniform(_billboardShaderProgramUniforms.size, 0.0025f);
+        int _tempScore = _score;
+        for (int i = 0; i < 6; i++)
+        {
+            int index = _tempScore % 10;
+            glBindTexture(GL_TEXTURE_2D, _numTextureHandles[index]);
+            glm::mat4 numMtx = glm::translate(modelMtx, glm::vec3(19.9f, 5.05f, -0.0675f + i * 0.005));
+            _billboardShaderProgram->setProgramUniform(_billboardShaderProgramUniforms.mvMatrix, viewMtx * numMtx);
+            glDrawArrays(GL_POINTS, 0, 1);
+            _tempScore /= 10;
+        }
+    }
 }
 
 void Engine::_updateScene()
 {
-    spawnControl(pause);
-    _spawnBackground();
+    _spawnControl(_pauseObstacles);
+    if (!_pauseBackground)
+        _spawnBackground();
     // player Move
-    if (!pause)
+    if (!_pauseObstacles)
     { // no moving when paused
         if (_keys[GLFW_KEY_A])
         { // move left
@@ -784,14 +877,36 @@ void Engine::_updateScene()
         }
         if (_keys[GLFW_KEY_W])
             _player->jump();
+        _score++;
     }
+
+    if (_collided > 0)
+    {
+        glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
+        color.r = _collided / 100.0f;
+        color.g -= _collided / 100.0f;
+        _spotLight.ambient = color;
+        _spotLight.diffuse = color;
+        _spotLight.specular = color;
+        _collided -= 1;
+    }
+
     _spotLight.position = _player->pos;
     _spotLight.position.y = 10.0f;
     _updateLights();
+
+    if (_health < 0)
+    {
+        _health = 3;
+        _score = 0;
+        _obs.clear();
+        obstacleSlots = 10;
+    }
     // free cam
     if (_keys[GLFW_KEY_0])
     {
         _camStat.free = !_camStat.free;
+        _pauseObstacles = _camStat.free;
         _keys[GLFW_KEY_0] = false; // consume that input
         if (!_camStat.free)
         { // reset the camera stats
@@ -838,20 +953,21 @@ void Engine::_updateScene()
         }
     }
 
-    if (_keys[GLFW_KEY_9])
+    if (_keys[GLFW_KEY_O])
     {                              // spawn a obstale
-        _keys[GLFW_KEY_9] = false; // consume that input
-        _createObstacle();
+        _keys[GLFW_KEY_O] = false; // consume that input
+        if (_keys[GLFW_KEY_LEFT_SHIFT] || _keys[GLFW_KEY_RIGHT_SHIFT])
+            _spawnBackground();
+        else
+            _createObstacle();
     }
-    if (_keys[GLFW_KEY_1])
+    if (_keys[GLFW_KEY_P])
     {
-        _keys[GLFW_KEY_1] = false; // consume that input
-        pause = !pause;
-    }
-    if (_keys[GLFW_KEY_2])
-    {
-        _keys[GLFW_KEY_2] = false; // consume that input
-        _spawnBackground();
+        _keys[GLFW_KEY_P] = false; // consume that input
+        if (_keys[GLFW_KEY_LEFT_SHIFT] || _keys[GLFW_KEY_RIGHT_SHIFT])
+            _pauseBackground = !_pauseBackground;
+        else
+            _pauseObstacles = !_pauseObstacles;
     }
 }
 
@@ -961,11 +1077,17 @@ void Engine::_sendMaterial(Material material) const
 void Engine::_setupTextures()
 {
 
-    _skybox.handle = _loadAndRegisterTexture("");
+    _heartTextureHandle = CSCI441::TextureUtils::loadAndRegisterTexture("texture/heart.png");
 
+    for (int i = 0; i < 10; i++)
+    {
+        std::string path = "texture/text/" + std::to_string(i) + ".png";
+        _numTextureHandles[i] = CSCI441::TextureUtils::loadAndRegisterTexture(path.c_str());
+    }
+
+    _skybox.handle = _loadAndRegisterTexture("");
     _tex = _loadAndRegisterFlatTexture("texture/StoneWall.jpg");
     _nor = _loadAndRegisterFlatTexture("texture/StoneWallNormal.jpg");
-
     std::cout << "_tex: " << _tex << "_nor: " << _nor << std::endl;
 }
 

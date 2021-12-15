@@ -5,6 +5,7 @@
 #include <CSCI441/ShaderProgram.hpp>
 #include <CSCI441/FreeCam.hpp>
 #include <CSCI441/objects.hpp>
+#include <CSCI441/TextureUtils.hpp>
 #include <stb_image.h>
 
 #include <vector>
@@ -154,10 +155,10 @@ private:
     unsigned int lastSpawnedFrame = 0;
     unsigned int currentFrame = 180; // current game time
     // does not start at zero to fix issue with spawining obstacles the first time
-
-    bool pause;              // pasue the obstacles
-    void _createObstacle();  // creates an obstacle
-    void spawnControl(bool); // controls spawning obstacles
+    int _collided;
+    bool _pauseObstacles;     // pasue the obstacles
+    void _createObstacle();   // creates an obstacle
+    void _spawnControl(bool); // controls spawning obstacles
 
     void frame(); // track frame updates
 
@@ -165,6 +166,7 @@ private:
     void _generateEnvironment();
     void _spawnBackground(); // spawn more background elements
     bool _stepBackground(glm::mat4 *, glm::mat4 *, double *, bool);
+    bool _pauseBackground;
     float _backgroundSpeed = 0.25; // speed of the background
     unsigned int lastBackgroundFrame = 0;
 
@@ -174,13 +176,13 @@ private:
     CSCI441::ShaderProgram *_textureShaderProgram = nullptr;
     /// \desc shader program that adds bump map to objects
     CSCI441::ShaderProgram *_bumpShaderProgram = nullptr;
-    CSCI441::ShaderProgram *_bitmapShaderProgram = nullptr;
+    CSCI441::ShaderProgram *_billboardShaderProgram = nullptr;
 
     // helper functions to keep shader setup under control
     void _setupBlinnPhongShader();
     void _setupTextureShader();
     void _setupBumpShader();
-    void _setupBitmapShader();
+    void _setupBillboardShader();
 
     Light _pointLight;
     Light _spotLight;
@@ -240,6 +242,8 @@ private:
         GLint projMatrix;
         /// \desc the texture to apply
         GLint image;
+
+        GLint size;
     } _billboardShaderProgramUniforms;
     /// \desc stores the locations of all of our shader attributes
 
@@ -291,6 +295,17 @@ private:
 
     GLuint _faceVAO;
     GLuint _faceVBO;
+
+    glm::vec3 _origin;
+    GLuint _billboardVAO;
+    GLuint _billboardVBO;
+
+    GLuint _heartTextureHandle;
+    GLuint _numTextureHandles[10];
+
+    int _health;
+    int _score;
+    void _setupBillboards();
 };
 /// \desc functions for user interactions
 void keyboard_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
