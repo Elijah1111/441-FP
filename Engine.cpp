@@ -999,6 +999,9 @@ void Engine::_updateLights()
     _blinnPhongShaderProgram->setProgramUniform(_blinnPhongShaderUniformLocations.skyLight.diffuse, _skyLight.diffuse);
     _blinnPhongShaderProgram->setProgramUniform(_blinnPhongShaderUniformLocations.skyLight.specular, _skyLight.specular);
     _blinnPhongShaderProgram->setProgramUniform(_blinnPhongShaderUniformLocations.skyLight.visible, _skyLight.visible);
+
+    _bumpShaderProgram->setProgramUniform(_bumpShaderUniformLocations.pPos, _pointLight.position);
+    _bumpShaderProgram->setProgramUniform(_bumpShaderUniformLocations.pCol, _pointLight.diffuse);
 }
 
 void Engine::run()
