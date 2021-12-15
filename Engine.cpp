@@ -832,8 +832,8 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx)
     glm::mat4 modelMtx0 = glm::translate(modelMtx, _player->pos);
 
     // DRAW PLAYER
-    if (int(_collided / 10) % 2 == 0)
-        _player->drawMe(modelMtx0, viewMtx, projMtx);
+//    if (int(_collided / 10) % 2 == 0)
+//        _player->drawMe(modelMtx0, viewMtx, projMtx);
 
     //// END DRAWING MODELS ////
     if (!_camStat.free)
@@ -1085,7 +1085,6 @@ void Engine::_setupTextures()
 {
 
     _heartTextureHandle = CSCI441::TextureUtils::loadAndRegisterTexture("texture/heart.png");
-    _paoneHandle = CSCI441::TextureUtils::loadAndRegisterTexture("texture/profile_thumb.png");
 
     for (int i = 0; i < 10; i++)
     {
