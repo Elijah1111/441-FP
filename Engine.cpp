@@ -705,11 +705,18 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx)
     glDrawElements(GL_TRIANGLE_STRIP, _numGroundPoints, GL_UNSIGNED_SHORT, (void *)0);
     //// END DRAWING THE GROUND PLANE ////
     //// BEGIN DRAWING THE GREEN SUN////
-    glm::mat4 tmp = glm::translate(glm::mat4(1.0), glm::vec3(-WORLD_SIZE / 2,
-                                                             10.0f, -WORLD_SIZE / 2));
+    glm::mat4 tmp = glm::translate(
+        glm::mat4(1.0),
+        glm::vec3(-WORLD_SIZE / 2, 10.0f, -WORLD_SIZE / 2));
+    tmp = glm::rotate(tmp, glm::radians(-45.0f), CSCI441::Y_AXIS);
     _computeAndSendMatrixUniforms(tmp, viewMtx, projMtx);
     _sendMaterial(FULL_RED);
     CustomObjects::drawTeapot();
+    tmp = glm::translate(
+        glm::mat4(1.0),
+        glm::vec3(-WORLD_SIZE / 2, 11.0f, -WORLD_SIZE / 2));
+    _computeAndSendMatrixUniforms(tmp, viewMtx, projMtx);
+    CSCI441::drawSolidSphere(2.0f, 100, 100);
 
     //// END DRAWING THE GREEN SUN////
 
@@ -825,8 +832,8 @@ void Engine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx)
     glm::mat4 modelMtx0 = glm::translate(modelMtx, _player->pos);
 
     // DRAW PLAYER
-    if (int(_collided / 10) % 2 == 0)
-        _player->drawMe(modelMtx0, viewMtx, projMtx);
+    // if (int(_collided / 10) % 2 == 0)
+    //     _player->drawMe(modelMtx0, viewMtx, projMtx);
 
     //// END DRAWING MODELS ////
     if (!_camStat.free)
