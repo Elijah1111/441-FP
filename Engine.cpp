@@ -1088,6 +1088,7 @@ void Engine::_setupTextures()
 {
 
     _heartTextureHandle = CSCI441::TextureUtils::loadAndRegisterTexture("texture/heart.png");
+    _paoneHandle = CSCI441::TextureUtils::loadAndRegisterTexture("texture/profile_thumb.png");
 
     for (int i = 0; i < 10; i++)
     {

@@ -302,6 +302,7 @@ private:
 
     GLuint _heartTextureHandle;
     GLuint _numTextureHandles[10];
+    GLuint _paoneHandle;
 
     int _health;
     int _score;
