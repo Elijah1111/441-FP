@@ -20,6 +20,9 @@ None that we know of.
 We each contributed all over the place, so there was a good deal of overlap, but below are areas where we each focused more specifically.
 ### Elijah
 ### Shane
+Implemented model loader and animations. The model loader has the ability to procedurally import sequentially numbered models
+As the horse moves faster, the animation increases in speed and as the horse moves slower the animation slows down. \
+Imported and arranged a custom dark spooky skybox.
 ### Benjamin
 Created the Bump Map shader for the brick buildings. It uses multiple light sources and a Blinn-Phong Model under the hood. \
 To accompany the bump map shader, a custom function for creating 3D rectangular prisms that are to be textured was built. \
