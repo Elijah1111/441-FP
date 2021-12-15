@@ -23,6 +23,7 @@ None that we know of.
 ## Responsibilities
 We each contributed all over the place, so there was a good deal of overlap, but below are areas where we each focused more specifically.
 ### Elijah
+Implemented initial engine. Created spawning mechanics for obstacles and background
 ### Shane
 Implemented model loader and animations. The model loader has the ability to procedurally import sequentially numbered models
 As the horse moves faster, the animation increases in speed and as the horse moves slower the animation slows down. \
